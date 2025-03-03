@@ -44,7 +44,6 @@ const weatherIcon = {
 };
 
 const getWeatherIcon = (weatherCode) => {
-  console.log(weatherCode);
   return weatherIcon[weatherCode];
 };
 

@@ -3,13 +3,15 @@ import { useLoadScript, Autocomplete } from "@react-google-maps/api";
 
 const libraries = ["places"];
 
-const LocationInput = ({ onLocationSelected }) => {
+const LocationInput = ({ onLocationSelected, userLonInput, userLatInput }) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // Replace with your API key
     libraries,
   });
-
   const [inputValue, setInputValue] = useState("");
+  const [latValue, setLatValue] = useState("");
+  const [lonValue, setLonValue] = useState("");
+
   const autocompleteRef = useRef(null);
 
   const handleInputChange = (event) => {
@@ -23,9 +25,42 @@ const LocationInput = ({ onLocationSelected }) => {
         const lat = place.geometry.location.lat();
         const lng = place.geometry.location.lng();
         onLocationSelected(lat, lng);
-        console.log("Latitude:", lat, "Longitude:", lng);
+        setLatValue(lat.toFixed(3));
+        setLonValue(lng.toFixed(3));
       }
     }
+  };
+
+  const handleGetUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          onLocationSelected(lat, lng);
+          setLatValue(lat.toFixed(3));
+          setLonValue(lng.toFixed(3));
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          alert("Unable to retrieve your location.");
+        },
+      );
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  };
+
+  const handleLatChange = (e) => {
+    const value = e.target.value;
+    setLatValue(value);
+    userLatInput(value);
+  };
+
+  const handleLonChange = (e) => {
+    const value = e.target.value;
+    setLonValue(value);
+    userLonInput(value);
   };
 
   if (loadError) return <div>Error loading maps!</div>;
@@ -40,13 +75,16 @@ const LocationInput = ({ onLocationSelected }) => {
         onPlaceChanged={handlePlaceChanged}
       >
         <input
+          className={`w-full p-2`}
           type="text"
           placeholder="Enter a location"
           value={inputValue}
           onChange={handleInputChange}
-          style={{ width: "300px", padding: "10px", border: "1px solid #ccc" }}
         />
       </Autocomplete>
+      <input type="number" onChange={handleLatChange} value={latValue} />
+      <input type="number" onChange={handleLonChange} value={lonValue} />
+      <button onClick={handleGetUserLocation}>Get Current Location</button>
     </div>
   );
 };

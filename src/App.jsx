@@ -6,8 +6,8 @@ import { useState, useEffect } from "react";
 import MobileMenu from "./components/MobileMenu.jsx";
 
 function App() {
-  const [lat, setLat] = useState(null);
-  const [lng, setLon] = useState(null);
+  const [lat, setLat] = useState(51.5072);
+  const [lon, setLon] = useState(-0.1275);
   const [isKPH, setKPH] = useState(false);
 
   const handleLocationSelected = (latitude, longitude) => {
@@ -19,14 +19,30 @@ function App() {
     setKPH(!isKPH);
   };
 
+  const handleUserInputLat = (inputValue) => {
+    setLat(inputValue);
+  };
+
+  const handleUserInputLon = (inputValue) => {
+    setLon(inputValue);
+  };
+
+  useEffect(() => {
+    console.log(lat, lon);
+  }, [lat, lon]);
+
   return (
-    <div className={`mx-1 bg-slate-800 text-gray-50`}>
+    <div className={`bg-slate-800 text-gray-50`}>
       <Header />
       <main className={`relative`}>
-        <LocationInput onLocationSelected={handleLocationSelected} />
-        <MainWeatherGridSection lat={lat} lon={lng} isKPH={isKPH} />
+        <LocationInput
+          onLocationSelected={handleLocationSelected}
+          userLonInput={handleUserInputLon}
+          userLatInput={handleUserInputLat}
+        />
+        <MainWeatherGridSection lat={lat} lon={lon} isKPH={isKPH} />
       </main>
-      <MobileMenu toggleSpeedUnit={handleToggleSpeedUnit} />
+      {/*<MobileMenu toggleSpeedUnit={handleToggleSpeedUnit} />*/}
     </div>
   );
 }

@@ -5,6 +5,8 @@ import TimeParameter from "./weather-parameters/TimeParameter.jsx";
 import PrecipitationParameter from "./weather-parameters/PrecipitationParameter.jsx";
 import WeatherTypeParameter from "./weather-parameters/WeatherTypeParameter.jsx";
 import WindParameter from "./weather-parameters/WindParameter.jsx";
+import DewPointParameter from "./weather-parameters/DewPointParameter.jsx";
+import HumidityParameter from "./weather-parameters/HumidityParameter.jsx";
 
 const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
   const [weatherData, setWeatherData] = useState(null);
@@ -12,32 +14,35 @@ const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
   const [error, setError] = useState(null);
   const [currentDate, setCurrentDate] = useState(""); // Holds the active date
   const [speedUnit, setSpeedUnit] = useState("MPH");
+  const [degreeUnit, setDegreeUnit] = useState("C");
 
   const sectionRefs = useRef([]); // Stores refs for each section
 
   // ---------------FETCH WEATHER DATA---------------------------------------------------
-  useEffect(() => {
-    const fetchWeatherData = async () => {
-      if (lat && lon) {
-        const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation_probability,precipitation,rain,showers,weather_code,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=sunrise,sunset,daylight_duration&wind_speed_unit=mph&timezone=auto`;
 
+  const fetchWeatherData = async () => {
+    if (lat && lon) {
+      const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation_probability,precipitation,rain,showers,weather_code,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=sunrise,sunset,daylight_duration&wind_speed_unit=mph&timezone=auto`;
+
+      setLoading(true);
+      setError(null);
+
+      try {
         setLoading(true);
-        setError(null);
-
-        try {
-          setLoading(true);
-          const openMeteoResponse = await axios.get(apiUrl);
-          setWeatherData(openMeteoResponse.data);
-        } catch (err) {
-          setError(err);
-          setWeatherData(null);
-        } finally {
-          setLoading(false);
-        }
+        const openMeteoResponse = await axios.get(apiUrl);
+        setWeatherData(openMeteoResponse.data);
+      } catch (err) {
+        setError(err);
+        setWeatherData(null);
+      } finally {
+        setLoading(false);
       }
-    };
+    }
+  };
+
+  useEffect(() => {
     fetchWeatherData();
-  }, [lat, lon]);
+  }, []);
 
   // ---------------INTERSECTION OBSERVER TO CHANGE DATE BASED ON THE DAT IN VIEW---------------------------------------------------
   useEffect(() => {
@@ -85,28 +90,36 @@ const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
     wind_speed_10m,
     wind_direction_10m,
     wind_gusts_10m,
+    relative_humidity_2m,
+    dew_point_2m,
   } = weatherData.hourly;
 
   const parameterNames = [
     "Time (24hr)",
-    "Cloud Cover (Total)",
-    "Cloud Cover (High)",
-    "Cloud Cover (Mid)",
-    "Cloud Cover (Low)",
+    "Clouds (Total)",
+    "Clouds (High)",
+    "Clouds (Mid)",
+    "Clouds (Low)",
     "Weather",
-    "Precipitation Probability (%)",
-    `Wind Speed (${speedUnit})`,
+    "Precipitation (%)",
+    `Wind                                       (${speedUnit})`,
     "Wind Direction",
-    `Wind Gusts (${speedUnit})`,
+    `Gusts (${speedUnit})`,
+    "Humidity (%)",
+    `Dew Point (°${degreeUnit})`,
   ];
 
   const gridItemStyling =
-    "relative grid h-10 w-10 place-items-center rounded-sm p-1";
+    "relative grid h-8 w-8 place-items-center text-sm rounded-sm p-1";
 
   const timeToDay = [];
   time.forEach((time, index) => {
     if (index % 24 === 0) {
-      timeToDay.push(time);
+      const convertedToDate = new Date(time);
+      const day = convertedToDate.getDate();
+      const month = convertedToDate.getMonth() + 1;
+      const year = convertedToDate.getFullYear();
+      timeToDay.push(`${day}/${month}/${year}`);
     }
   });
 
@@ -125,16 +138,17 @@ const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
 
   return (
     <div className="relative">
+      <button onClick={fetchWeatherData}>CLICK ME!</button>
       <div className="top-4 left-4 z-50 rounded bg-white p-3 text-lg font-bold shadow-lg dark:bg-gray-900">
         {currentDate || "Loading..."}
       </div>
       <section className={`flex`}>
-        <div className={`w-auto`}>
+        <div className={`flex w-auto flex-col items-end gap-1 bg-sky-950 px-1`}>
           {parameterNames.map((name) => {
             return (
               <p
                 key={`weatherParam-${name}`}
-                className={`mb-1 flex h-10 w-max items-center`}
+                className={`flex h-8 w-max items-center text-right text-sm`}
               >
                 {name}
               </p>
@@ -194,6 +208,17 @@ const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
                 dayIndex={dayIndex}
                 gridItemStyling={gridItemStyling}
                 mphToKph={handleMphToKph}
+              />
+              <HumidityParameter
+                humidity={relative_humidity_2m}
+                dayIndex={dayIndex}
+                gridItemStyling={gridItemStyling}
+              />
+              <DewPointParameter
+                dewPoint={dew_point_2m}
+                dayIndex={dayIndex}
+                gridItemStyling={gridItemStyling}
+                additionalWeatherVariable={relative_humidity_2m}
               />
             </div>
           ))}

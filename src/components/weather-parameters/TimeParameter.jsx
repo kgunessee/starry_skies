@@ -1,4 +1,5 @@
 import React from "react";
+import { gridColourFunction } from "../gridColourFunction.js";
 
 export default function TimeParameter({
   time,
@@ -6,20 +7,17 @@ export default function TimeParameter({
   additionalWeatherVariable, // Prop to pass a value from another variable to use as styling, for example, cloud cover in the time component.
   gridItemStyling,
 }) {
-  const handleTimeStyle = (clouds, index) => {
-    if (clouds[index] < 30) {
-      return "#17182b";
-    } else if (clouds[index] > 30 && clouds[index] < 60) {
-      return "#a4c423";
-    } else return "#b50526";
-  };
+  const clouds = additionalWeatherVariable.slice(
+    dayIndex * 24,
+    dayIndex * 24 + 24,
+  );
 
   return (
     <div className="mb-1 flex gap-1">
       {time.slice(dayIndex * 24, dayIndex * 24 + 24).map((item, index) => (
         <div
           style={{
-            background: handleTimeStyle(additionalWeatherVariable, index),
+            background: gridColourFunction(clouds[index], 10, 30),
           }}
           key={`grid-item-${index}`}
           className={`${gridItemStyling}`}
