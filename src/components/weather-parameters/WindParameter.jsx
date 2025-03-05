@@ -38,7 +38,7 @@ export default function WindParameter({
         {roundedWindSpeed.map((item, index) => (
           <div
             style={{
-              background: gridColourFunction(item, 11, 20),
+              background: gridColourFunction(windSpeed[index], 11, 20),
             }}
             key={`grid-item-${index}`}
             className={`${gridItemStyling}`}
@@ -65,7 +65,7 @@ export default function WindParameter({
       <div className="mb-1 flex gap-1">
         {roundedWindGusts.map((item, index) => (
           <div
-            style={{}}
+            style={{background: gridColourFunction(windGusts[index], 20, 30)}}
             key={`grid-item-${index}`}
             className={`${gridItemStyling}`}
           >

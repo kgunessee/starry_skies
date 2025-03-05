@@ -7,14 +7,15 @@ import WeatherTypeParameter from "./weather-parameters/WeatherTypeParameter.jsx"
 import WindParameter from "./weather-parameters/WindParameter.jsx";
 import DewPointParameter from "./weather-parameters/DewPointParameter.jsx";
 import HumidityParameter from "./weather-parameters/HumidityParameter.jsx";
+import TemperatureParameter from "./weather-parameters/TemperatureParameter.jsx";
 
-const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
+const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentDate, setCurrentDate] = useState(""); // Holds the active date
   const [speedUnit, setSpeedUnit] = useState("MPH");
-  const [degreeUnit, setDegreeUnit] = useState("C");
+  const [tempUnit, setTempUnit] = useState("C");
 
   const sectionRefs = useRef([]); // Stores refs for each section
 
@@ -74,6 +75,10 @@ const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
     isKPH ? setSpeedUnit("KPH") : setSpeedUnit("MPH");
   }, [isKPH]);
 
+  useEffect(() => {
+    isFarenheit ? setTempUnit("F") : setTempUnit("C");
+  }, [isFarenheit]);
+
   if (loading) return <div>Loading weather...</div>;
   if (error) return <div>Error fetching weather: {error.message}</div>;
   if (!weatherData) return <div>Enter a location to see the weather.</div>;
@@ -90,6 +95,7 @@ const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
     wind_speed_10m,
     wind_direction_10m,
     wind_gusts_10m,
+    temperature_2m,
     relative_humidity_2m,
     dew_point_2m,
   } = weatherData.hourly;
@@ -105,12 +111,13 @@ const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
     `Wind                                       (${speedUnit})`,
     "Wind Direction",
     `Gusts (${speedUnit})`,
+    `Temperature (°${tempUnit})`,
     "Humidity (%)",
-    `Dew Point (°${degreeUnit})`,
+    `Dew Point (°${tempUnit})`,
   ];
 
   const gridItemStyling =
-    "relative grid h-8 w-8 place-items-center text-sm rounded-sm p-1";
+    "relative grid h-8 w-8 place-items-center text-black font-semibold text-sm rounded-sm p-1";
 
   const timeToDay = [];
   time.forEach((time, index) => {
@@ -136,6 +143,12 @@ const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
     }
   };
 
+  const handleCelciusToFarenheit = (celcius) => {
+    if (isFarenheit) {
+      return ((celcius * 9) / 2 + 32).toFixed(0);
+    } else return celcius;
+  };
+
   return (
     <div className="relative">
       <button onClick={fetchWeatherData}>CLICK ME!</button>
@@ -156,13 +169,13 @@ const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
           })}
         </div>
         {/* ------------------Scrollable Weather Sections--------------------- */}
-        <div className="flex overflow-x-auto">
+        <div className="flex gap-1 overflow-x-auto">
           {timeToDay.map((day, dayIndex) => (
             <div
               key={dayIndex}
               ref={(item) => (sectionRefs.current[dayIndex] = item)}
               data-date={day}
-              className="border"
+              className="bg-gradient-to-r from-slate-900 to-slate-800"
             >
               {/* ---------------Weather Data Grid---------------- */}
               <TimeParameter
@@ -196,6 +209,12 @@ const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
                 dayIndex={dayIndex}
                 gridItemStyling={gridItemStyling}
               />
+              <TemperatureParameter
+                temp={temperature_2m}
+                dayIndex={dayIndex}
+                gridItemStyling={gridItemStyling}
+                celciusToFarenheit={handleCelciusToFarenheit}
+              />
               <PrecipitationParameter
                 precipitation={precipitation_probability}
                 dayIndex={dayIndex}
@@ -218,7 +237,8 @@ const MainWeatherGridSection = ({ lat, lon, isKPH }) => {
                 dewPoint={dew_point_2m}
                 dayIndex={dayIndex}
                 gridItemStyling={gridItemStyling}
-                additionalWeatherVariable={relative_humidity_2m}
+                additionalWeatherVariable={temperature_2m}
+                celciusToFarenheit={handleCelciusToFarenheit}
               />
             </div>
           ))}

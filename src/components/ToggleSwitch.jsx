@@ -1,10 +1,10 @@
 import React from "react";
 
-export default function ToggleSwitch({ toggleSpeedUnit }) {
+export default function ToggleSwitch({ toggleUnit }) {
   return (
     <button
       onClick={() => {
-        toggleSpeedUnit();
+        toggleUnit();
       }}
       className={``}
     >

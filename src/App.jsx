@@ -9,6 +9,7 @@ function App() {
   const [lat, setLat] = useState(51.5072);
   const [lon, setLon] = useState(-0.1275);
   const [isKPH, setKPH] = useState(false);
+  const [isFahrenheit, setIsFahrenheit] = useState(false);
 
   const handleLocationSelected = (latitude, longitude) => {
     setLat(latitude);
@@ -19,6 +20,10 @@ function App() {
     setKPH(!isKPH);
   };
 
+  const handleToggleTempUnit = () => {
+    setIsFahrenheit(!isFahrenheit);
+  }
+
   const handleUserInputLat = (inputValue) => {
     setLat(inputValue);
   };
@@ -27,9 +32,6 @@ function App() {
     setLon(inputValue);
   };
 
-  useEffect(() => {
-    console.log(lat, lon);
-  }, [lat, lon]);
 
   return (
     <div className={`bg-slate-800 text-gray-50`}>
@@ -40,9 +42,9 @@ function App() {
           userLonInput={handleUserInputLon}
           userLatInput={handleUserInputLat}
         />
-        <MainWeatherGridSection lat={lat} lon={lon} isKPH={isKPH} />
+        <MainWeatherGridSection lat={lat} lon={lon} isKPH={isKPH} isFarenheit={isFahrenheit} />
       </main>
-      {/*<MobileMenu toggleSpeedUnit={handleToggleSpeedUnit} />*/}
+      <MobileMenu toggleSpeedUnit={handleToggleSpeedUnit} toggleTempUnit={handleToggleTempUnit} />
     </div>
   );
 }
