@@ -44,7 +44,7 @@ function App() {
         />
         <MainWeatherGridSection lat={lat} lon={lon} isKPH={isKPH} isFarenheit={isFahrenheit} />
       </main>
-      <MobileMenu toggleSpeedUnit={handleToggleSpeedUnit} toggleTempUnit={handleToggleTempUnit} />
+      {/*<MobileMenu toggleSpeedUnit={handleToggleSpeedUnit} toggleTempUnit={handleToggleTempUnit} />*/}
     </div>
   );
 }

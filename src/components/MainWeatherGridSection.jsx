@@ -16,6 +16,7 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
   const [currentDate, setCurrentDate] = useState(""); // Holds the active date
   const [speedUnit, setSpeedUnit] = useState("MPH");
   const [tempUnit, setTempUnit] = useState("C");
+  const [dailyWeatherData, setDailyWeatherData] = useState(null);
 
   const sectionRefs = useRef([]); // Stores refs for each section
 
@@ -52,8 +53,12 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          const date = entry.target.getAttribute("data-date");
+          const dateIndex = timeToDay.indexOf(date);
+
           if (entry.isIntersecting) {
-            setCurrentDate(entry.target.getAttribute("data-date"));
+            setCurrentDate(date);
+            setDailyWeatherData(sunrise[dateIndex]);
           }
         });
       },
@@ -100,6 +105,8 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
     dew_point_2m,
   } = weatherData.hourly;
 
+  const { sunrise, sunset, daylight_duration } = weatherData.daily;
+
   const parameterNames = [
     "Time (24hr)",
     "Clouds (Total)",
@@ -108,7 +115,7 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
     "Clouds (Low)",
     "Weather",
     "Precipitation (%)",
-    `Wind                                       (${speedUnit})`,
+    `Wind (${speedUnit})`,
     "Wind Direction",
     `Gusts (${speedUnit})`,
     `Temperature (°${tempUnit})`,
@@ -154,9 +161,12 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
       <button onClick={fetchWeatherData}>CLICK ME!</button>
       <div className="top-4 left-4 z-50 rounded bg-white p-3 text-lg font-bold shadow-lg dark:bg-gray-900">
         {currentDate || "Loading..."}
+        {dailyWeatherData}
       </div>
-      <section className={`flex`}>
+      <section className={`flex h-[300px] overflow-scroll`}>
+
         <div className={`flex w-auto flex-col items-end gap-1 bg-sky-950 px-1`}>
+          <p>Time</p>
           {parameterNames.map((name) => {
             return (
               <p
@@ -168,6 +178,24 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
             );
           })}
         </div>
+
+        <div className="flex gap-1 overflow-x-auto">
+          <p>TIME</p>
+          {timeToDay.map((day, dayIndex) => (
+            <div
+              key={dayIndex}
+              ref={(item) => (sectionRefs.current[dayIndex] = item)}
+              data-date={day}
+              className="bg-gradient-to-r from-slate-900 to-slate-800"
+            > <TimeParameter
+              time={timeToHour}
+              dayIndex={dayIndex}
+              additionalWeatherVariable={cloud_cover}
+              gridItemStyling={gridItemStyling}
+            /></div>
+          ))}{" "}
+        </div>
+
         {/* ------------------Scrollable Weather Sections--------------------- */}
         <div className="flex gap-1 overflow-x-auto">
           {timeToDay.map((day, dayIndex) => (
@@ -178,68 +206,74 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
               className="bg-gradient-to-r from-slate-900 to-slate-800"
             >
               {/* ---------------Weather Data Grid---------------- */}
-              <TimeParameter
-                time={timeToHour}
-                dayIndex={dayIndex}
-                additionalWeatherVariable={cloud_cover}
-                gridItemStyling={gridItemStyling}
-              />
-              <CloudParameter
-                clouds={cloud_cover}
-                dayIndex={dayIndex}
-                gridItemStyling={gridItemStyling}
-              />
-              <CloudParameter
-                clouds={cloud_cover_high}
-                dayIndex={dayIndex}
-                gridItemStyling={gridItemStyling}
-              />
-              <CloudParameter
-                clouds={cloud_cover_mid}
-                dayIndex={dayIndex}
-                gridItemStyling={gridItemStyling}
-              />
-              <CloudParameter
-                clouds={cloud_cover_low}
-                dayIndex={dayIndex}
-                gridItemStyling={gridItemStyling}
-              />
-              <WeatherTypeParameter
-                weatherType={weather_code}
-                dayIndex={dayIndex}
-                gridItemStyling={gridItemStyling}
-              />
-              <TemperatureParameter
-                temp={temperature_2m}
-                dayIndex={dayIndex}
-                gridItemStyling={gridItemStyling}
-                celciusToFarenheit={handleCelciusToFarenheit}
-              />
-              <PrecipitationParameter
-                precipitation={precipitation_probability}
-                dayIndex={dayIndex}
-                gridItemStyling={gridItemStyling}
-              />
-              <WindParameter
-                windSpeed={wind_speed_10m}
-                windGusts={wind_gusts_10m}
-                windDirection={wind_direction_10m}
-                dayIndex={dayIndex}
-                gridItemStyling={gridItemStyling}
-                mphToKph={handleMphToKph}
-              />
-              <HumidityParameter
-                humidity={relative_humidity_2m}
-                dayIndex={dayIndex}
-                gridItemStyling={gridItemStyling}
-              />
-              <DewPointParameter
-                dewPoint={dew_point_2m}
-                dayIndex={dayIndex}
-                gridItemStyling={gridItemStyling}
-                additionalWeatherVariable={temperature_2m}
-                celciusToFarenheit={handleCelciusToFarenheit}
-              />
+              <div className={`sticky inset-0`}>
+                <TimeParameter
+                  time={timeToHour}
+                  dayIndex={dayIndex}
+                  additionalWeatherVariable={cloud_cover}
+                  gridItemStyling={gridItemStyling}
+                />
+              </div>
+              <div>
+                <CloudParameter
+                  clouds={cloud_cover}
+                  dayIndex={dayIndex}
+                  gridItemStyling={gridItemStyling}
+                />
+                <CloudParameter
+                  clouds={cloud_cover_high}
+                  dayIndex={dayIndex}
+                  gridItemStyling={gridItemStyling}
+                />
+                <CloudParameter
+                  clouds={cloud_cover_mid}
+                  dayIndex={dayIndex}
+                  gridItemStyling={gridItemStyling}
+                />
+                <CloudParameter
+                  clouds={cloud_cover_low}
+                  dayIndex={dayIndex}
+                  gridItemStyling={gridItemStyling}
+                />
+                <WeatherTypeParameter
+                  weatherType={weather_code}
+                  dayIndex={dayIndex}
+                  gridItemStyling={gridItemStyling}
+                />
+
+                <PrecipitationParameter
+                  precipitation={precipitation_probability}
+                  dayIndex={dayIndex}
+                  gridItemStyling={gridItemStyling}
+                />
+                <WindParameter
+                  windSpeed={wind_speed_10m}
+                  windGusts={wind_gusts_10m}
+                  windDirection={wind_direction_10m}
+                  dayIndex={dayIndex}
+                  gridItemStyling={gridItemStyling}
+                  mphToKph={handleMphToKph}
+                />
+
+                <TemperatureParameter
+                  temp={temperature_2m}
+                  dayIndex={dayIndex}
+                  gridItemStyling={gridItemStyling}
+                  celciusToFarenheit={handleCelciusToFarenheit}
+                />
+                <HumidityParameter
+                  humidity={relative_humidity_2m}
+                  dayIndex={dayIndex}
+                  gridItemStyling={gridItemStyling}
+                />
+                <DewPointParameter
+                  dewPoint={dew_point_2m}
+                  dayIndex={dayIndex}
+                  gridItemStyling={gridItemStyling}
+                  additionalWeatherVariable={temperature_2m}
+                  celciusToFarenheit={handleCelciusToFarenheit}
+                />
+              </div>
             </div>
           ))}
         </div>

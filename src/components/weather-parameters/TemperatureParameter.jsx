@@ -9,7 +9,7 @@ export default function TemperatureParameter({
 }) {
   const convertedTemp = temp
     .slice(dayIndex * 24, dayIndex * 24 + 24)
-    .map((dewPoint) => Math.round(dewPoint).toFixed());
+    .map((item) => Math.round(item).toFixed());
 
   return (
     <div className="mb-1 flex gap-1">

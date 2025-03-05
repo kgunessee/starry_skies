@@ -2,6 +2,7 @@ import React from "react";
 
 export default function CloudParameter({ clouds, dayIndex, gridItemStyling }) {
   return (
+
     <div className="mb-1 flex gap-1">
       {clouds.slice(dayIndex * 24, dayIndex * 24 + 24).map((item, index) => (
         <div key={`grid-item-${index}`} className={`${gridItemStyling}`}>
@@ -17,6 +18,7 @@ export default function CloudParameter({ clouds, dayIndex, gridItemStyling }) {
           </div>
         </div>
       ))}
+
     </div>
   );
 }
