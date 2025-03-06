@@ -9,10 +9,20 @@ import DewPointParameter from "./weather-parameters/DewPointParameter.jsx";
 import HumidityParameter from "./weather-parameters/HumidityParameter.jsx";
 import TemperatureParameter from "./weather-parameters/TemperatureParameter.jsx";
 
-const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
-  const [weatherData, setWeatherData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+const MainWeatherGridSection = ({
+  lat,
+  lon,
+  isKPH,
+  isFarenheit,
+  mainSectionHeight,
+  loading,
+  fetchWeatherData,
+  weatherData,
+  error,
+}) => {
+  // const [weatherData, setWeatherData] = useState(null);
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState(null);
   const [currentDate, setCurrentDate] = useState(""); // Holds the active date
   const [speedUnit, setSpeedUnit] = useState("MPH");
   const [tempUnit, setTempUnit] = useState("C");
@@ -24,31 +34,31 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
 
   // ---------------FETCH WEATHER DATA---------------------------------------------------
 
-  const fetchWeatherData = async () => {
-    if (lat && lon) {
-      const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation_probability,precipitation,rain,showers,weather_code,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=sunrise,sunset,daylight_duration&wind_speed_unit=mph&timezone=auto`;
+  // const fetchWeatherData = async () => {
+  //   if (lat && lon) {
+  //     const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation_probability,precipitation,rain,showers,weather_code,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=sunrise,sunset,daylight_duration&wind_speed_unit=mph&timezone=auto`;
+  //
+  //     setLoading(true);
+  //     setError(null);
+  //
+  //     try {
+  //       setLoading(true);
+  //       const openMeteoResponse = await axios.get(apiUrl);
+  //       setWeatherData(openMeteoResponse.data);
+  //     } catch (err) {
+  //       setError(err);
+  //       setWeatherData(null);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
+  //
+  // useEffect(() => {
+  //   fetchWeatherData();
+  // }, []);
 
-      setLoading(true);
-      setError(null);
-
-      try {
-        setLoading(true);
-        const openMeteoResponse = await axios.get(apiUrl);
-        setWeatherData(openMeteoResponse.data);
-      } catch (err) {
-        setError(err);
-        setWeatherData(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchWeatherData();
-  }, []);
-
-  // ---------------INTERSECTION OBSERVER TO CHANGE DATE BASED ON THE DAT IN VIEW---------------------------------------------------
+  // ---------------INTERSECTION OBSERVER TO CHANGE DATE BASED ON THE DATE IN VIEW---------------------------------------------------
   useEffect(() => {
     if (!weatherData || !weatherData.hourly) return;
 
@@ -158,69 +168,36 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
     } else return celcius;
   };
 
+  let isSyncing = false;
 
-    let isSyncing = false;
+  const handleScroll = (sourceRef, targetRef) => {
+    if (!sourceRef.current || !targetRef.current || isSyncing) return;
 
-    const handleScroll = (sourceRef, targetRef) => {
-      if (!sourceRef.current || !targetRef.current || isSyncing) return;
-
-      isSyncing = true;
-      targetRef.current.scrollLeft = sourceRef.current.scrollLeft;
-      isSyncing = false;
-    };
-
+    isSyncing = true;
+    targetRef.current.scrollLeft = sourceRef.current.scrollLeft;
+    isSyncing = false;
+  };
 
   return (
-    <div className="relative">
-      <button onClick={fetchWeatherData}>CLICK ME!</button>
+    <div className="sticky top-0">
       <div className="z-50 w-auto overflow-y-scroll rounded bg-white p-3 text-lg font-bold shadow-lg dark:bg-gray-900">
         {currentDate || "Loading..."}
         {dailyWeatherData}
-
       </div>
       {/*TIME GRID SECTION*/}
-      <div  className={`flex `}>
+      <div className={`flex`}>
         <div className={``}>
-        <p className={`flex w-[100px] items-center flex-col gap-1 h-full text-xs bg-sky-950 px-1`} >Time (24hr)</p>
-        </div>
-      <div ref={timeGridRef} onScroll={() => handleScroll(timeGridRef, mainGridRef)} className={`flex gap-1 overflow-y-scroll`}>
-        {timeToDay.map((day, dayIndex) => (
-          <div
-            key={dayIndex}
-            ref={(item) => (sectionRefs.current[dayIndex] = item)}
-            data-date={day}
-            className="bg-gradient-to-r from-slate-900 to-slate-800"
+          <p
+            className={`flex h-full w-[100px] items-center justify-end gap-1 bg-sky-950 px-1 text-xs`}
           >
-            {/* ---------------Weather Data Grid---------------- */}
-            <div className={``}>
-              <TimeParameter
-                time={timeToHour}
-                dayIndex={dayIndex}
-                additionalWeatherVariable={cloud_cover}
-                gridItemStyling={gridItemStyling}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-      </div>
-      {/*MAIN GRID SECTION*/}
-      <section className={`flex h-[350px] overflow-scroll`}>
-        <div className={`flex flex-col w-[100px] shrink-0 items-end gap-1 bg-sky-950 px-1`}>
-          {parameterNames.map((name) => {
-            return (
-              <p
-                key={`weatherParam-${name}`}
-                className={`flex min-h-8  items-center w-auto text-right text-xs`}
-              >
-                {name}
-              </p>
-            );
-          })}
+            Time (24hr)
+          </p>
         </div>
-
-        {/* ------------------Scrollable Weather Sections--------------------- */}
-        <div ref={mainGridRef} onScroll={() => handleScroll(mainGridRef, timeGridRef)} className="flex h-max gap-1 overflow-x-auto">
+        <div
+          ref={timeGridRef}
+          onScroll={() => handleScroll(timeGridRef, mainGridRef)}
+          className={`flex gap-1 overflow-y-scroll`}
+        >
           {timeToDay.map((day, dayIndex) => (
             <div
               key={dayIndex}
@@ -229,14 +206,52 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
               className="bg-gradient-to-r from-slate-900 to-slate-800"
             >
               {/* ---------------Weather Data Grid---------------- */}
-              {/*<div className={`sticky inset-0`}>*/}
-              {/*  <TimeParameter*/}
-              {/*    time={timeToHour}*/}
-              {/*    dayIndex={dayIndex}*/}
-              {/*    additionalWeatherVariable={cloud_cover}*/}
-              {/*    gridItemStyling={gridItemStyling}*/}
-              {/*  />*/}
-              {/*</div>*/}
+              <div className={``}>
+                <TimeParameter
+                  time={timeToHour}
+                  dayIndex={dayIndex}
+                  additionalWeatherVariable={cloud_cover}
+                  gridItemStyling={gridItemStyling}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/*MAIN GRID SECTION*/}
+      <section
+        style={{ maxHeight: `${mainSectionHeight}px` }}
+        className={`flex overflow-scroll`}
+      >
+        <div
+          className={`flex w-[100px] shrink-0 flex-col items-end gap-1 bg-sky-950 px-1`}
+        >
+          {parameterNames.map((name) => {
+            return (
+              <p
+                key={`weatherParam-${name}`}
+                className={`flex min-h-8 w-auto items-center text-right text-xs`}
+              >
+                {name}
+              </p>
+            );
+          })}
+        </div>
+
+        {/* ------------------Scrollable Weather Sections--------------------- */}
+        <div
+          ref={mainGridRef}
+          onScroll={() => handleScroll(mainGridRef, timeGridRef)}
+          className="flex h-max gap-1 overflow-x-auto"
+        >
+          {timeToDay.map((day, dayIndex) => (
+            <div
+              key={dayIndex}
+              ref={(item) => (sectionRefs.current[dayIndex] = item)}
+              data-date={day}
+              className="bg-gradient-to-r from-slate-900 to-slate-800"
+            >
+              {/* ---------------Weather Data Grid---------------- */}
               <div>
                 <CloudParameter
                   clouds={cloud_cover}
