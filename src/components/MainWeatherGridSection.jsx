@@ -181,7 +181,7 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
       {/*TIME GRID SECTION*/}
       <div  className={`flex `}>
         <div className={``}>
-        <p className={`flex w-[100px] flex-col items-end gap-1 bg-sky-950 px-1`} >time</p>
+        <p className={`flex w-[100px] items-center flex-col gap-1 h-full text-xs bg-sky-950 px-1`} >Time (24hr)</p>
         </div>
       <div ref={timeGridRef} onScroll={() => handleScroll(timeGridRef, mainGridRef)} className={`flex gap-1 overflow-y-scroll`}>
         {timeToDay.map((day, dayIndex) => (
@@ -206,12 +206,12 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
       </div>
       {/*MAIN GRID SECTION*/}
       <section className={`flex h-[350px] overflow-scroll`}>
-        <div className={`flex w-[100px] flex-col items-end gap-1 bg-sky-950 px-1`}>
+        <div className={`flex flex-col w-[100px] shrink-0 items-end gap-1 bg-sky-950 px-1`}>
           {parameterNames.map((name) => {
             return (
               <p
                 key={`weatherParam-${name}`}
-                className={`flex min-h-8 w-max items-center text-right text-sm`}
+                className={`flex min-h-8  items-center w-auto text-right text-xs`}
               >
                 {name}
               </p>
