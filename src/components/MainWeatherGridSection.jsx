@@ -19,6 +19,8 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
   const [dailyWeatherData, setDailyWeatherData] = useState(null);
 
   const sectionRefs = useRef([]); // Stores refs for each section
+  const timeGridRef = useRef(null);
+  const mainGridRef = useRef(null);
 
   // ---------------FETCH WEATHER DATA---------------------------------------------------
 
@@ -108,7 +110,7 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
   const { sunrise, sunset, daylight_duration } = weatherData.daily;
 
   const parameterNames = [
-    "Time (24hr)",
+    // "Time (24hr)",
     "Clouds (Total)",
     "Clouds (High)",
     "Clouds (Mid)",
@@ -124,7 +126,7 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
   ];
 
   const gridItemStyling =
-    "relative grid h-7 w-7 place-items-center text-black font-semibold text-sm rounded-sm p-1";
+    "relative grid h-8 w-8 place-items-center text-black font-semibold text-sm rounded-sm p-1";
 
   const timeToDay = [];
   time.forEach((time, index) => {
@@ -156,20 +158,60 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
     } else return celcius;
   };
 
+
+    let isSyncing = false;
+
+    const handleScroll = (sourceRef, targetRef) => {
+      if (!sourceRef.current || !targetRef.current || isSyncing) return;
+
+      isSyncing = true;
+      targetRef.current.scrollLeft = sourceRef.current.scrollLeft;
+      isSyncing = false;
+    };
+
+
   return (
     <div className="relative">
       <button onClick={fetchWeatherData}>CLICK ME!</button>
-      <div className="top-4 left-4 z-50 rounded bg-white p-3 text-lg font-bold shadow-lg dark:bg-gray-900">
+      <div className="z-50 w-auto overflow-y-scroll rounded bg-white p-3 text-lg font-bold shadow-lg dark:bg-gray-900">
         {currentDate || "Loading..."}
         {dailyWeatherData}
+
       </div>
-      <section className={`flex overflow-scroll`}>
-        <div className={`flex w-auto flex-col items-end gap-1 bg-sky-950 px-1`}>
+      {/*TIME GRID SECTION*/}
+      <div  className={`flex `}>
+        <div className={``}>
+        <p className={`flex w-[100px] flex-col items-end gap-1 bg-sky-950 px-1`} >time</p>
+        </div>
+      <div ref={timeGridRef} onScroll={() => handleScroll(timeGridRef, mainGridRef)} className={`flex gap-1 overflow-y-scroll`}>
+        {timeToDay.map((day, dayIndex) => (
+          <div
+            key={dayIndex}
+            ref={(item) => (sectionRefs.current[dayIndex] = item)}
+            data-date={day}
+            className="bg-gradient-to-r from-slate-900 to-slate-800"
+          >
+            {/* ---------------Weather Data Grid---------------- */}
+            <div className={``}>
+              <TimeParameter
+                time={timeToHour}
+                dayIndex={dayIndex}
+                additionalWeatherVariable={cloud_cover}
+                gridItemStyling={gridItemStyling}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      </div>
+      {/*MAIN GRID SECTION*/}
+      <section className={`flex h-[350px] overflow-scroll`}>
+        <div className={`flex w-[100px] flex-col items-end gap-1 bg-sky-950 px-1`}>
           {parameterNames.map((name) => {
             return (
               <p
                 key={`weatherParam-${name}`}
-                className={`flex h-7 w-max items-center text-right text-sm`}
+                className={`flex min-h-8 w-max items-center text-right text-sm`}
               >
                 {name}
               </p>
@@ -178,7 +220,7 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
         </div>
 
         {/* ------------------Scrollable Weather Sections--------------------- */}
-        <div className="flex gap-1 overflow-x-auto">
+        <div ref={mainGridRef} onScroll={() => handleScroll(mainGridRef, timeGridRef)} className="flex h-max gap-1 overflow-x-auto">
           {timeToDay.map((day, dayIndex) => (
             <div
               key={dayIndex}
@@ -187,14 +229,14 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
               className="bg-gradient-to-r from-slate-900 to-slate-800"
             >
               {/* ---------------Weather Data Grid---------------- */}
-              <div className={`sticky inset-0`}>
-                <TimeParameter
-                  time={timeToHour}
-                  dayIndex={dayIndex}
-                  additionalWeatherVariable={cloud_cover}
-                  gridItemStyling={gridItemStyling}
-                />
-              </div>
+              {/*<div className={`sticky inset-0`}>*/}
+              {/*  <TimeParameter*/}
+              {/*    time={timeToHour}*/}
+              {/*    dayIndex={dayIndex}*/}
+              {/*    additionalWeatherVariable={cloud_cover}*/}
+              {/*    gridItemStyling={gridItemStyling}*/}
+              {/*  />*/}
+              {/*</div>*/}
               <div>
                 <CloudParameter
                   clouds={cloud_cover}
@@ -246,41 +288,6 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
                   humidity={relative_humidity_2m}
                   dayIndex={dayIndex}
                   gridItemStyling={gridItemStyling}
-                />
-                <DewPointParameter
-                  dewPoint={dew_point_2m}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                  additionalWeatherVariable={temperature_2m}
-                  celciusToFarenheit={handleCelciusToFarenheit}
-                />
-                <DewPointParameter
-                  dewPoint={dew_point_2m}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                  additionalWeatherVariable={temperature_2m}
-                  celciusToFarenheit={handleCelciusToFarenheit}
-                />
-                <DewPointParameter
-                  dewPoint={dew_point_2m}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                  additionalWeatherVariable={temperature_2m}
-                  celciusToFarenheit={handleCelciusToFarenheit}
-                />
-                <DewPointParameter
-                  dewPoint={dew_point_2m}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                  additionalWeatherVariable={temperature_2m}
-                  celciusToFarenheit={handleCelciusToFarenheit}
-                />
-                <DewPointParameter
-                  dewPoint={dew_point_2m}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                  additionalWeatherVariable={temperature_2m}
-                  celciusToFarenheit={handleCelciusToFarenheit}
                 />
                 <DewPointParameter
                   dewPoint={dew_point_2m}
