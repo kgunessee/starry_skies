@@ -67,7 +67,7 @@ const LocationInput = ({ onLocationSelected, userLonInput, userLatInput }) => {
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
-    <div className={``}>
+    <div className={`grid grid-cols-4`}>
       <Autocomplete
         onLoad={(autocomplete) => {
           autocompleteRef.current = autocomplete;
@@ -75,15 +75,25 @@ const LocationInput = ({ onLocationSelected, userLonInput, userLatInput }) => {
         onPlaceChanged={handlePlaceChanged}
       >
         <input
-          className={`w-full p-2`}
+          className={`w-full border-2 p-2`}
           type="text"
           placeholder="Enter a location"
           value={inputValue}
           onChange={handleInputChange}
         />
       </Autocomplete>
-      <input type="number" onChange={handleLatChange} value={latValue} />
-      <input type="number" onChange={handleLonChange} value={lonValue} />
+      <input
+        className={`w-full border-2 p-2`}
+        type="number"
+        onChange={handleLatChange}
+        value={latValue}
+      />
+      <input
+        className={`w-full border-2 p-2`}
+        type="number"
+        onChange={handleLonChange}
+        value={lonValue}
+      />
       <button onClick={handleGetUserLocation}>Get Current Location</button>
     </div>
   );
