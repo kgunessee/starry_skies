@@ -110,7 +110,7 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
   const { sunrise, sunset, daylight_duration } = weatherData.daily;
 
   const parameterNames = [
-    "Time (24hr)",
+    // "Time (24hr)",
     "Clouds (Total)",
     "Clouds (High)",
     "Clouds (Mid)",
@@ -205,7 +205,7 @@ const MainWeatherGridSection = ({ lat, lon, isKPH, isFarenheit }) => {
       </div>
       </div>
       {/*MAIN GRID SECTION*/}
-      <section className={`flex h-[300px] overflow-scroll`}>
+      <section className={`flex h-[350px] overflow-scroll`}>
         <div className={`flex w-[100px] flex-col items-end gap-1 bg-sky-950 px-1`}>
           {parameterNames.map((name) => {
             return (
