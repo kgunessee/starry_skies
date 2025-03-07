@@ -62,6 +62,10 @@ const MainWeatherGridSection = ({
   useEffect(() => {
     if (!weatherData || !weatherData.hourly) return;
 
+    const isMobile = window.innerWidth <= 768; // Adjust breakpoint as needed
+    const threshold = isMobile ? 0.1 : 0.2; // Adjust thresholds
+    const rootMargin = isMobile ? '0px 0px -20px 0px' : '0px'; // Adjust rootMargin
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -74,8 +78,10 @@ const MainWeatherGridSection = ({
           }
         });
       },
-      { root: null, threshold: 0.8 },
+      { root: null, threshold: threshold, rootMargin: rootMargin }
     );
+
+    //0.2 is ideal on desktop
 
     sectionRefs.current.forEach((section) => {
       if (section) observer.observe(section);
@@ -87,6 +93,8 @@ const MainWeatherGridSection = ({
       });
     };
   }, [weatherData]);
+
+
 
   useEffect(() => {
     isKPH ? setSpeedUnit("KPH") : setSpeedUnit("MPH");
@@ -180,15 +188,26 @@ const MainWeatherGridSection = ({
 
   return (
     <div className="sticky top-0">
-      <div className="z-50 w-auto overflow-y-scroll rounded bg-white p-3 text-lg font-bold shadow-lg dark:bg-gray-900">
+      <div className="z-50 w-auto overflow-y-scroll rounded bg-blue-900 p-3 text-lg font-bold shadow-lg ">
         {currentDate || "Loading..."}
         {dailyWeatherData}
       </div>
+
       {/*TIME GRID SECTION*/}
       <div className={`flex`}>
-        <div className={``}>
+        <div className={` flex w-[100px] shrink-0 flex-col text-xs items-end gap-1 bg-sky-950 px-1`}>
           <p
-            className={`flex h-full w-[100px] items-center justify-end gap-1 bg-sky-950 px-1 text-xs`}
+            className={` flex min-h-16 w-auto items-center text-right text-xs`}
+          >
+
+          </p>
+          <p
+            className={` flex min-h-8 w-auto items-center text-right text-xs`}
+          >
+            Moon
+          </p>
+          <p
+            className={` flex min-h-8 w-auto items-center text-right text-xs`}
           >
             Time (24hr)
           </p>
@@ -205,8 +224,20 @@ const MainWeatherGridSection = ({
               data-date={day}
               className="bg-gradient-to-r from-slate-900 to-slate-800"
             >
+              <div className={`bg-sky-950`}>
+                <div className={`sticky top-0 left-0 z-50 mx-2 h-16 w-10`}>
+                  {day}
+                </div>
+              </div>
+
               {/* ---------------Weather Data Grid---------------- */}
               <div className={``}>
+                <TimeParameter
+                  time={timeToHour}
+                  dayIndex={dayIndex}
+                  additionalWeatherVariable={cloud_cover}
+                  gridItemStyling={gridItemStyling}
+                />
                 <TimeParameter
                   time={timeToHour}
                   dayIndex={dayIndex}
