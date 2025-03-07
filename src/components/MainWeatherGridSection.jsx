@@ -26,7 +26,7 @@ const MainWeatherGridSection = ({
   const [currentDate, setCurrentDate] = useState(""); // Holds the active date
   const [speedUnit, setSpeedUnit] = useState("MPH");
   const [tempUnit, setTempUnit] = useState("C");
-  const [dailyWeatherData, setDailyWeatherData] = useState(null);
+  const [dailyWeatherData, setDailyWeatherData] = useState({  });
 
   const sectionRefs = useRef([]); // Stores refs for each section
   const timeGridRef = useRef(null);
@@ -64,7 +64,7 @@ const MainWeatherGridSection = ({
 
     const isMobile = window.innerWidth <= 768; // Adjust breakpoint as needed
     const threshold = isMobile ? 0.1 : 0.2; // Adjust thresholds
-    const rootMargin = isMobile ? '0px 0px -20px 0px' : '0px'; // Adjust rootMargin
+    const rootMargin = isMobile ? "0px 0px -20px 0px" : "0px"; // Adjust rootMargin
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -74,11 +74,12 @@ const MainWeatherGridSection = ({
 
           if (entry.isIntersecting) {
             setCurrentDate(date);
-            setDailyWeatherData(sunrise[dateIndex]);
+            setDailyWeatherData({sunrise: dateToTime(sunrise[dateIndex]),
+              sunset: dateToTime(sunset[dateIndex]),});
           }
         });
       },
-      { root: null, threshold: threshold, rootMargin: rootMargin }
+      { root: null, threshold: threshold, rootMargin: rootMargin },
     );
 
     //0.2 is ideal on desktop
@@ -93,8 +94,6 @@ const MainWeatherGridSection = ({
       });
     };
   }, [weatherData]);
-
-
 
   useEffect(() => {
     isKPH ? setSpeedUnit("KPH") : setSpeedUnit("MPH");
@@ -157,10 +156,29 @@ const MainWeatherGridSection = ({
     }
   });
 
-  const timeToHour = time.map((t) => {
-    const date = new Date(t);
-    return date.getHours();
-  });
+  const timeToHour = (timeInput) => {
+    if (Array.isArray(timeInput)) {
+      return timeInput.map((t) => {
+        return new Date(t).getHours();
+      });
+    } else if (typeof timeInput === 'string') {
+      return new Date(timeInput).getHours();
+    } else {
+      return null; // Handle invalid input
+    }
+  };
+
+  // const timeToHour = time.map((t) => {
+  //   const date = new Date(t);
+  //   return date.getHours();
+  // });
+
+  const dateToTime = (date) => {
+    return new Date(date).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   const handleMphToKph = (miles) => {
     if (isKPH) {
@@ -176,6 +194,18 @@ const MainWeatherGridSection = ({
     } else return celcius;
   };
 
+  // const roundHour = (timeString) => {
+  //
+  //   console.log(timeString);
+  //   const [hour, minute] = timeString.split(":").map(Number);
+  //   console.log(minute >= 30 ? hour + 1 : hour)
+  //   return minute >= 30 ? hour + 1 : hour;
+  //
+  // };
+
+  console.log(timeToHour(time));
+
+
   let isSyncing = false;
 
   const handleScroll = (sourceRef, targetRef) => {
@@ -188,27 +218,24 @@ const MainWeatherGridSection = ({
 
   return (
     <div className="sticky top-0">
-      <div className="z-50 w-auto overflow-y-scroll rounded bg-blue-900 p-3 text-lg font-bold shadow-lg ">
+      <div className="z-50 w-auto overflow-y-scroll rounded bg-blue-900 p-3 text-lg font-bold shadow-lg">
         {currentDate || "Loading..."}
-        {dailyWeatherData}
+        {dailyWeatherData.sunrise}
+        {dailyWeatherData.sunset}
       </div>
 
       {/*TIME GRID SECTION*/}
       <div className={`flex`}>
-        <div className={` flex w-[100px] shrink-0 flex-col text-xs items-end gap-1 bg-sky-950 px-1`}>
+        <div
+          className={`flex w-[100px] shrink-0 flex-col items-end gap-1 bg-sky-950 px-1 text-xs`}
+        >
           <p
-            className={` flex min-h-16 w-auto items-center text-right text-xs`}
-          >
-
-          </p>
-          <p
-            className={` flex min-h-8 w-auto items-center text-right text-xs`}
-          >
+            className={`flex min-h-16 w-auto items-center text-right text-xs`}
+          ></p>
+          <p className={`flex min-h-8 w-auto items-center text-right text-xs`}>
             Moon
           </p>
-          <p
-            className={` flex min-h-8 w-auto items-center text-right text-xs`}
-          >
+          <p className={`flex min-h-8 w-auto items-center text-right text-xs`}>
             Time (24hr)
           </p>
         </div>
@@ -233,16 +260,17 @@ const MainWeatherGridSection = ({
               {/* ---------------Weather Data Grid---------------- */}
               <div className={``}>
                 <TimeParameter
-                  time={timeToHour}
+                  time={timeToHour(time)}
                   dayIndex={dayIndex}
                   additionalWeatherVariable={cloud_cover}
                   gridItemStyling={gridItemStyling}
                 />
                 <TimeParameter
-                  time={timeToHour}
+                  dailyWeather={dailyWeatherData}
+                  time={timeToHour(time)}
                   dayIndex={dayIndex}
-                  additionalWeatherVariable={cloud_cover}
                   gridItemStyling={gridItemStyling}
+
                 />
               </div>
             </div>
