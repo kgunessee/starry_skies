@@ -9,54 +9,31 @@ import DewPointParameter from "./weather-parameters/DewPointParameter.jsx";
 import HumidityParameter from "./weather-parameters/HumidityParameter.jsx";
 import TemperatureParameter from "./weather-parameters/TemperatureParameter.jsx";
 
+import {
+  dateToTime,
+  timeToHour,
+  unixToTime,
+} from "./unitConversionFunctions.js";
+import MoonParameter from "./weather-parameters/MoonParameter.jsx";
+
 const MainWeatherGridSection = ({
-  lat,
-  lon,
   isKPH,
   isFarenheit,
   mainSectionHeight,
   loading,
-  fetchWeatherData,
   weatherData,
   error,
+  moonData,
 }) => {
-  // const [weatherData, setWeatherData] = useState(null);
-  // const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState(null);
   const [currentDate, setCurrentDate] = useState(""); // Holds the active date
   const [speedUnit, setSpeedUnit] = useState("MPH");
   const [tempUnit, setTempUnit] = useState("C");
-  const [dailyWeatherData, setDailyWeatherData] = useState({  });
+  const [dailyWeatherData, setDailyWeatherData] = useState({});
+  const [dailyMoonData, setDailyMoonData] = useState({});
 
   const sectionRefs = useRef([]); // Stores refs for each section
   const timeGridRef = useRef(null);
   const mainGridRef = useRef(null);
-
-  // ---------------FETCH WEATHER DATA---------------------------------------------------
-
-  // const fetchWeatherData = async () => {
-  //   if (lat && lon) {
-  //     const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation_probability,precipitation,rain,showers,weather_code,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=sunrise,sunset,daylight_duration&wind_speed_unit=mph&timezone=auto`;
-  //
-  //     setLoading(true);
-  //     setError(null);
-  //
-  //     try {
-  //       setLoading(true);
-  //       const openMeteoResponse = await axios.get(apiUrl);
-  //       setWeatherData(openMeteoResponse.data);
-  //     } catch (err) {
-  //       setError(err);
-  //       setWeatherData(null);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-  // };
-  //
-  // useEffect(() => {
-  //   fetchWeatherData();
-  // }, []);
 
   // ---------------INTERSECTION OBSERVER TO CHANGE DATE BASED ON THE DATE IN VIEW---------------------------------------------------
   useEffect(() => {
@@ -70,19 +47,23 @@ const MainWeatherGridSection = ({
       (entries) => {
         entries.forEach((entry) => {
           const date = entry.target.getAttribute("data-date");
-          const dateIndex = timeToDay.indexOf(date);
+          const dateIndex = formattedDate.indexOf(date);
 
           if (entry.isIntersecting) {
             setCurrentDate(date);
-            setDailyWeatherData({sunrise: dateToTime(sunrise[dateIndex]),
-              sunset: dateToTime(sunset[dateIndex]),});
+            setDailyWeatherData({
+              sunrise: dateToTime(sunrise[dateIndex]),
+              sunset: dateToTime(sunset[dateIndex]),
+            });
+            setDailyMoonData({
+              moonrise: unixToTime(moonData.daily[dateIndex].moonrise),
+              moonset: unixToTime(moonData.daily[dateIndex].moonset),
+            });
           }
         });
       },
       { root: null, threshold: threshold, rootMargin: rootMargin },
     );
-
-    //0.2 is ideal on desktop
 
     sectionRefs.current.forEach((section) => {
       if (section) observer.observe(section);
@@ -124,7 +105,7 @@ const MainWeatherGridSection = ({
     dew_point_2m,
   } = weatherData.hourly;
 
-  const { sunrise, sunset, daylight_duration } = weatherData.daily;
+  const { sunrise, sunset } = weatherData.daily;
 
   const parameterNames = [
     // "Time (24hr)",
@@ -145,72 +126,21 @@ const MainWeatherGridSection = ({
   const gridItemStyling =
     "relative grid h-8 w-8 place-items-center text-black font-semibold text-sm rounded-sm p-1";
 
-  const timeToDay = [];
+  const formattedDate = [];
   time.forEach((time, index) => {
     if (index % 24 === 0) {
       const convertedToDate = new Date(time);
       const day = convertedToDate.getDate();
       const month = convertedToDate.getMonth() + 1;
       const year = convertedToDate.getFullYear();
-      timeToDay.push(`${day}/${month}/${year}`);
+      formattedDate.push(`${day}/${month}/${year}`);
     }
   });
-
-  const timeToHour = (timeInput) => {
-    if (Array.isArray(timeInput)) {
-      return timeInput.map((t) => {
-        return new Date(t).getHours();
-      });
-    } else if (typeof timeInput === 'string') {
-      return new Date(timeInput).getHours();
-    } else {
-      return null; // Handle invalid input
-    }
-  };
-
-  // const timeToHour = time.map((t) => {
-  //   const date = new Date(t);
-  //   return date.getHours();
-  // });
-
-  const dateToTime = (date) => {
-    return new Date(date).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const handleMphToKph = (miles) => {
-    if (isKPH) {
-      return (miles * 1.60934).toFixed(1);
-    } else {
-      return miles.toFixed(1);
-    }
-  };
-
-  const handleCelciusToFarenheit = (celcius) => {
-    if (isFarenheit) {
-      return ((celcius * 9) / 2 + 32).toFixed(0);
-    } else return celcius;
-  };
-
-  // const roundHour = (timeString) => {
-  //
-  //   console.log(timeString);
-  //   const [hour, minute] = timeString.split(":").map(Number);
-  //   console.log(minute >= 30 ? hour + 1 : hour)
-  //   return minute >= 30 ? hour + 1 : hour;
-  //
-  // };
-
-  console.log(timeToHour(time));
-
 
   let isSyncing = false;
 
   const handleScroll = (sourceRef, targetRef) => {
     if (!sourceRef.current || !targetRef.current || isSyncing) return;
-
     isSyncing = true;
     targetRef.current.scrollLeft = sourceRef.current.scrollLeft;
     isSyncing = false;
@@ -219,9 +149,8 @@ const MainWeatherGridSection = ({
   return (
     <div className="sticky top-0">
       <div className="z-50 w-auto overflow-y-scroll rounded bg-blue-900 p-3 text-lg font-bold shadow-lg">
-        {currentDate || "Loading..."}
-        {dailyWeatherData.sunrise}
-        {dailyWeatherData.sunset}
+        <p>{currentDate || "Loading..."}</p>
+        <p>{dailyMoonData.moonrise}</p>
       </div>
 
       {/*TIME GRID SECTION*/}
@@ -244,7 +173,7 @@ const MainWeatherGridSection = ({
           onScroll={() => handleScroll(timeGridRef, mainGridRef)}
           className={`flex gap-1 overflow-y-scroll`}
         >
-          {timeToDay.map((day, dayIndex) => (
+          {formattedDate.map((day, dayIndex) => (
             <div
               key={dayIndex}
               ref={(item) => (sectionRefs.current[dayIndex] = item)}
@@ -259,10 +188,10 @@ const MainWeatherGridSection = ({
 
               {/* ---------------Weather Data Grid---------------- */}
               <div className={``}>
-                <TimeParameter
+                <MoonParameter
                   time={timeToHour(time)}
                   dayIndex={dayIndex}
-                  additionalWeatherVariable={cloud_cover}
+                  moonData={dailyMoonData}
                   gridItemStyling={gridItemStyling}
                 />
                 <TimeParameter
@@ -270,7 +199,6 @@ const MainWeatherGridSection = ({
                   time={timeToHour(time)}
                   dayIndex={dayIndex}
                   gridItemStyling={gridItemStyling}
-
                 />
               </div>
             </div>
@@ -303,7 +231,7 @@ const MainWeatherGridSection = ({
           onScroll={() => handleScroll(mainGridRef, timeGridRef)}
           className="flex h-max gap-1 overflow-x-auto"
         >
-          {timeToDay.map((day, dayIndex) => (
+          {formattedDate.map((day, dayIndex) => (
             <div
               key={dayIndex}
               ref={(item) => (sectionRefs.current[dayIndex] = item)}
@@ -349,14 +277,14 @@ const MainWeatherGridSection = ({
                   windDirection={wind_direction_10m}
                   dayIndex={dayIndex}
                   gridItemStyling={gridItemStyling}
-                  mphToKph={handleMphToKph}
+                  isKPH={isKPH}
                 />
 
                 <TemperatureParameter
                   temp={temperature_2m}
                   dayIndex={dayIndex}
                   gridItemStyling={gridItemStyling}
-                  celciusToFarenheit={handleCelciusToFarenheit}
+                  isFarenheit={isFarenheit}
                 />
                 <HumidityParameter
                   humidity={relative_humidity_2m}
@@ -368,7 +296,7 @@ const MainWeatherGridSection = ({
                   dayIndex={dayIndex}
                   gridItemStyling={gridItemStyling}
                   additionalWeatherVariable={temperature_2m}
-                  celciusToFarenheit={handleCelciusToFarenheit}
+                  isFarenheit={isFarenheit}
                 />
               </div>
             </div>

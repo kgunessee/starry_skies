@@ -58,7 +58,7 @@ export default function WeatherTypeParameter({
         .slice(dayIndex * 24, dayIndex * 24 + 24)
         .map((item, index) => (
           <div key={`grid-item-${index}`} className={`${gridItemStyling}`}>
-            <div key={index} className={``}>
+            <div key={index} className={`rounded bg-blue-400 p-0.5`}>
               {getWeatherIcon(item)}
             </div>
           </div>

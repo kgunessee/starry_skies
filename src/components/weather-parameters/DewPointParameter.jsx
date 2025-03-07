@@ -1,11 +1,13 @@
 import React from "react";
 
+import { handleCelciusToFarenheit } from "../unitConversionFunctions.js";
+
 export default function DewPointParameter({
   dewPoint,
   dayIndex,
   additionalWeatherVariable, // Prop to pass a value from another variable to use as styling, for example, cloud cover in the time component.
   gridItemStyling,
-  celciusToFarenheit,
+  isFarenheit,
 }) {
   const convertedDewPoint = dewPoint
     .slice(dayIndex * 24, dayIndex * 24 + 24)
@@ -38,7 +40,7 @@ export default function DewPointParameter({
           className={`${gridItemStyling}`}
         >
           <div key={index} className={``}>
-            {celciusToFarenheit(item)}
+            {handleCelciusToFarenheit(item, isFarenheit)}
           </div>
         </div>
       ))}

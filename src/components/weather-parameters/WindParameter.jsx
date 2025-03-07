@@ -1,5 +1,6 @@
 import React from "react";
 import { gridColourFunction } from "../gridColourFunction.js";
+import { handleMphToKph } from "../unitConversionFunctions.js";
 
 export default function WindParameter({
   windSpeed,
@@ -7,16 +8,16 @@ export default function WindParameter({
   windGusts,
   dayIndex,
   gridItemStyling,
-  mphToKph,
+  isKPH,
 }) {
   // Pre-process windSpeed and windGusts to integers
   const roundedWindSpeed = windSpeed
     .slice(dayIndex * 24, dayIndex * 24 + 24)
-    .map((speed) => Math.round(mphToKph(speed)));
+    .map((speed) => Math.round(handleMphToKph(speed, isKPH)));
 
   const roundedWindGusts = windGusts
     .slice(dayIndex * 24, dayIndex * 24 + 24)
-    .map((gust) => Math.round(mphToKph(gust)));
+    .map((gust) => Math.round(handleMphToKph(gust, isKPH)));
 
   const windDirections = windDirection.slice(dayIndex * 24, dayIndex * 24 + 24);
 
@@ -65,7 +66,7 @@ export default function WindParameter({
       <div className="mb-1 flex gap-1">
         {roundedWindGusts.map((item, index) => (
           <div
-            style={{background: gridColourFunction(windGusts[index], 20, 30)}}
+            style={{ background: gridColourFunction(windGusts[index], 20, 30) }}
             key={`grid-item-${index}`}
             className={`${gridItemStyling}`}
           >

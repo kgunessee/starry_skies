@@ -1,4 +1,5 @@
 import React from "react";
+import { roundHour } from "../unitConversionFunctions.js";
 
 export default function TimeParameter({
   time,
@@ -6,24 +7,15 @@ export default function TimeParameter({
   gridItemStyling,
   dailyWeather,
 }) {
-
-
-  const roundHour = (timeString) => {
-    if (timeString && dailyWeather) {
-      const [hour, minute] = timeString.split(":").map(Number);
-      return minute >= 30 ? hour + 1 : hour;
-    }
-  };
-
   const dayOrNightColour = (item) => {
     if (
-      item < roundHour(dailyWeather.sunrise) ||
-      item > roundHour(dailyWeather.sunset)
+      item < roundHour(dailyWeather.sunrise, dailyWeather) ||
+      item > roundHour(dailyWeather.sunset, dailyWeather)
     ) {
       return "#022763";
     } else if (
-      item === roundHour(dailyWeather.sunrise) ||
-      item === roundHour(dailyWeather.sunset)
+      item === roundHour(dailyWeather.sunrise, dailyWeather) ||
+      item === roundHour(dailyWeather.sunset, dailyWeather)
     ) {
       return "#c47d25";
     }
@@ -31,9 +23,9 @@ export default function TimeParameter({
   };
 
   const displayNumberOrSunIcon = (value) => {
-    if (value === roundHour(dailyWeather.sunrise)) {
+    if (value === roundHour(dailyWeather.sunrise, dailyWeather)) {
       return "up";
-    } else if (value === roundHour(dailyWeather.sunset)) {
+    } else if (value === roundHour(dailyWeather.sunset, dailyWeather)) {
       return "down";
     } else return value;
   };
