@@ -158,9 +158,9 @@ const MainWeatherGridSection = ({
         <div
           className={`flex w-[100px] shrink-0 flex-col items-end gap-1 bg-sky-950 px-1 text-xs`}
         >
-          <p
-            className={`flex min-h-16 w-auto items-center text-right text-xs`}
-          ></p>
+          {/*<p*/}
+          {/*  className={`flex min-h-16 w-auto items-center text-right text-xs`}*/}
+          {/*></p>*/}
           <p className={`flex min-h-8 w-auto items-center text-right text-xs`}>
             Moon
           </p>
@@ -180,11 +180,11 @@ const MainWeatherGridSection = ({
               data-date={day}
               className="bg-gradient-to-r from-slate-900 to-slate-800"
             >
-              <div className={`bg-sky-950`}>
-                <div className={`sticky top-0 left-0 z-50 mx-2 h-16 w-10`}>
-                  {day}
-                </div>
-              </div>
+              {/*<div className={`bg-sky-950`}>*/}
+              {/*  <div className={`sticky top-0 left-0 z-50 mx-2 h-16 w-10`}>*/}
+              {/*    {day}*/}
+              {/*  </div>*/}
+              {/*</div>*/}
 
               {/* ---------------Weather Data Grid---------------- */}
               <div className={``}>
@@ -264,6 +264,8 @@ const MainWeatherGridSection = ({
                   weatherType={weather_code}
                   dayIndex={dayIndex}
                   gridItemStyling={gridItemStyling}
+                  dailyWeather={dailyWeatherData}
+                  time={timeToHour(time)}
                 />
 
                 <PrecipitationParameter
