@@ -53,11 +53,14 @@ export default function WindParameter({
       <div className="mb-1 flex gap-1">
         {windDirections.map((item, index) => (
           <div
-            style={{ transform: `rotate(${item}deg)` }}
             key={`grid-item-${index}`}
-            className={`${gridItemStyling}`}
+            className={`${gridItemStyling} bg-accentBlue/20`}
           >
-            <div key={index} className={``}>
+            <div
+              style={{ transform: `rotate(${item}deg)` }}
+              key={index}
+              className={``}
+            >
               {arrow}
             </div>
           </div>

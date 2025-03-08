@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+@theme {
+    --color-background: #12182B;
+    --color-card-background: #1E273A;
+    --color-primaryText: #E0E0E0;
+    --color-secondaryText: #9E9E9E;
+    --color-dividerOrBorder: #37474F;
+    --color-trafficGreen: #48DF6B;
+    --color-trafficAmber: #EAC94A;
+    --color-trafficRed: #E57373;
+    --color-accentBlue: #0E648B;
+    --color-nighttime: #152D62;
+    --color-daylight: #FFD54F;
+    --color-sunset: #CAAE42;
+}
+
+
 body{
-    background: #123859;
+    background: #12182B;
 }

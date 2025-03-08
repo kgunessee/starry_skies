@@ -15,10 +15,10 @@ export default function DewPointParameter({
 
   const dewPointColourFunction = (value, param1, param2) => {
     if (value < param1) {
-      return "#c4122f";
+      return "#E57373";
     } else if (value >= param1 && value <= param2) {
-      return "#cf7821";
-    } else return "#7ec754";
+      return "#EAC94A";
+    } else return "#48DF6B";
   };
 
   const dewPointSpreadCalc = (temp, dewPoint) => {

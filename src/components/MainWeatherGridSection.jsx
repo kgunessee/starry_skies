@@ -148,7 +148,7 @@ const MainWeatherGridSection = ({
 
   return (
     <div className="sticky top-0">
-      <div className="z-50 w-auto overflow-y-scroll rounded bg-blue-900 p-3 text-lg font-bold shadow-lg">
+      <div className="bg-background z-50 w-auto overflow-y-scroll rounded p-3 text-lg font-bold shadow-lg">
         <p>{currentDate || "Loading..."}</p>
         <p>{dailyMoonData.moonrise}</p>
       </div>
@@ -156,7 +156,7 @@ const MainWeatherGridSection = ({
       {/*TIME GRID SECTION*/}
       <div className={`flex`}>
         <div
-          className={`flex w-[100px] shrink-0 flex-col items-end gap-1 bg-sky-950 px-1 text-xs`}
+          className={`bg-background/50 flex w-[100px] shrink-0 flex-col items-end gap-1 px-1 text-xs`}
         >
           {/*<p*/}
           {/*  className={`flex min-h-16 w-auto items-center text-right text-xs`}*/}
@@ -171,14 +171,14 @@ const MainWeatherGridSection = ({
         <div
           ref={timeGridRef}
           onScroll={() => handleScroll(timeGridRef, mainGridRef)}
-          className={`flex gap-1 overflow-y-scroll`}
+          className={`flex gap-4 overflow-y-scroll`}
         >
           {formattedDate.map((day, dayIndex) => (
             <div
               key={dayIndex}
               ref={(item) => (sectionRefs.current[dayIndex] = item)}
               data-date={day}
-              className="bg-gradient-to-r from-slate-900 to-slate-800"
+              className=""
             >
               {/*<div className={`bg-sky-950`}>*/}
               {/*  <div className={`sticky top-0 left-0 z-50 mx-2 h-16 w-10`}>*/}
@@ -211,7 +211,7 @@ const MainWeatherGridSection = ({
         className={`flex overflow-scroll`}
       >
         <div
-          className={`flex w-[100px] shrink-0 flex-col items-end gap-1 bg-sky-950 px-1`}
+          className={`flex w-[100px] shrink-0 flex-col items-end gap-1 px-1`}
         >
           {parameterNames.map((name) => {
             return (
@@ -229,14 +229,14 @@ const MainWeatherGridSection = ({
         <div
           ref={mainGridRef}
           onScroll={() => handleScroll(mainGridRef, timeGridRef)}
-          className="flex h-max gap-1 overflow-x-auto"
+          className="flex h-max gap-4 overflow-x-auto"
         >
           {formattedDate.map((day, dayIndex) => (
             <div
               key={dayIndex}
               ref={(item) => (sectionRefs.current[dayIndex] = item)}
               data-date={day}
-              className="bg-gradient-to-r from-slate-900 to-slate-800"
+              className=""
             >
               {/* ---------------Weather Data Grid---------------- */}
               <div>

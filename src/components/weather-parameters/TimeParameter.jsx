@@ -12,14 +12,14 @@ export default function TimeParameter({
       item < roundHour(dailyWeather.sunrise, dailyWeather) ||
       item > roundHour(dailyWeather.sunset, dailyWeather)
     ) {
-      return "#022763";
+      return "#152D62";
     } else if (
       item === roundHour(dailyWeather.sunrise, dailyWeather) ||
       item === roundHour(dailyWeather.sunset, dailyWeather)
     ) {
-      return "#c47d25";
+      return "#CAAE42";
     }
-    return "#c3f011";
+    return "#FFD54F";
   };
 
   const displayNumberOrSunIcon = (value) => {

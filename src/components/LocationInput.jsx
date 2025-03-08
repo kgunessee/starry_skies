@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLoadScript, Autocomplete } from "@react-google-maps/api";
 const libraries = ["places"];
-import { searchIcon } from "./SVGIcons.jsx";
+import { searchIcon, getUserLocationIcon } from "./SVGIcons.jsx";
 
 const LocationInput = ({
   onLocationSelected,
@@ -139,7 +139,7 @@ const LocationInput = ({
         )}
       </button>
       <button type={"button"} onClick={handleGetUserLocation}>
-        Get Current Location
+        {getUserLocationIcon}{" "}
       </button>
     </div>
   );
