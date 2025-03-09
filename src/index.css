@@ -13,9 +13,34 @@
     --color-nighttime: #152D62;
     --color-daylight: #FFD54F;
     --color-sunset: #CAAE42;
+    --color-buttonBlue: #3599d5;
+
+    --font-outfit: "Outfit", sans-serif;
 }
 
 
 body{
     background: #12182B;
+}
+
+.pac-container {
+    background-color: #12182B; /* Dark background */
+    color: #E0E0E0; /* Light text */
+    border: 1px solid #37474F; /* Dark border */
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.pac-item {
+    color: #E0E0E0;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.pac-item:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Dark hover background */
+}
+
+.pac-item-query {
+    color: #81D4FA; /* Highlight color */
 }

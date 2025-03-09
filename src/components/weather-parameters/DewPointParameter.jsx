@@ -1,6 +1,6 @@
 import React from "react";
 
-import { handleCelciusToFarenheit } from "../unitConversionFunctions.js";
+import { handleCelciusToFarenheit } from "../conversionFunctions.js";
 
 export default function DewPointParameter({
   dewPoint,

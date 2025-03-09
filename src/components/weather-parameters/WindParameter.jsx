@@ -1,6 +1,6 @@
 import React from "react";
 import { gridColourFunction } from "../gridColourFunction.js";
-import { handleMphToKph } from "../unitConversionFunctions.js";
+import { handleMphToKph } from "../conversionFunctions.js";
 
 export default function WindParameter({
   windSpeed,

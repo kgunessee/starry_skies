@@ -9,7 +9,9 @@ export default function Header() {
   };
 
   return (
-    <header className={`flex h-16 items-center justify-between bg-slate-900`}>
+    <header
+      className={`font-outfit flex h-16 items-center justify-between bg-slate-900`}
+    >
       <h1>Starry Skies</h1>
       <button
         className="flex h-8 w-8 flex-col justify-center space-y-1 transition-all duration-300 hover:cursor-pointer focus:outline-none"

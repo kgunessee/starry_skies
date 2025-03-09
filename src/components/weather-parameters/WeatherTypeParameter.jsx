@@ -12,7 +12,7 @@ import {
   lightning,
   moderateRain,
 } from "../WeatherIcons.jsx";
-import { roundHour } from "../unitConversionFunctions.js";
+import { roundHour } from "../conversionFunctions.js";
 
 const weatherIcon = {
   0: clear,

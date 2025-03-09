@@ -92,7 +92,7 @@ function App() {
 
   return (
     <div className={`bg-slate-800 text-gray-50`}>
-      <div ref={headerRef}>
+      <div className={`font-outfit`} ref={headerRef}>
         <Header />
         <LocationInput
           onLocationSelected={handleLocationSelected}
@@ -102,7 +102,7 @@ function App() {
           loading={loading}
         />
       </div>
-      <main className={`relative`}>
+      <main className={`font-outfit relative`}>
         <MainWeatherGridSection
           isKPH={isKPH}
           isFarenheit={isFahrenheit}

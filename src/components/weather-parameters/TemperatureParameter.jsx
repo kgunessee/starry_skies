@@ -1,6 +1,6 @@
 import React from "react";
 import { gridColourFunction } from "../gridColourFunction.js";
-import { handleCelciusToFarenheit } from "../unitConversionFunctions.js";
+import { handleCelciusToFarenheit } from "../conversionFunctions.js";
 
 export default function TemperatureParameter({
   temp,

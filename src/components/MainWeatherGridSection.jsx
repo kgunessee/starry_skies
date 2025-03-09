@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import CloudParameter from "./weather-parameters/CloudParameter.jsx";
 import TimeParameter from "./weather-parameters/TimeParameter.jsx";
 import PrecipitationParameter from "./weather-parameters/PrecipitationParameter.jsx";
@@ -9,11 +8,11 @@ import DewPointParameter from "./weather-parameters/DewPointParameter.jsx";
 import HumidityParameter from "./weather-parameters/HumidityParameter.jsx";
 import TemperatureParameter from "./weather-parameters/TemperatureParameter.jsx";
 
+import { dateToTime, timeToHour, unixToTime } from "./conversionFunctions.js";
 import {
-  dateToTime,
-  timeToHour,
-  unixToTime,
-} from "./unitConversionFunctions.js";
+  selectMoonPhaseIcon,
+  moonPhaseName,
+} from "./selectMoonIconFunction.js";
 import MoonParameter from "./weather-parameters/MoonParameter.jsx";
 
 const MainWeatherGridSection = ({
@@ -30,6 +29,7 @@ const MainWeatherGridSection = ({
   const [tempUnit, setTempUnit] = useState("C");
   const [dailyWeatherData, setDailyWeatherData] = useState({});
   const [dailyMoonData, setDailyMoonData] = useState({});
+  const [writtenDayString, setWrittenDayString] = useState("");
 
   const sectionRefs = useRef([]); // Stores refs for each section
   const timeGridRef = useRef(null);
@@ -51,6 +51,13 @@ const MainWeatherGridSection = ({
 
           if (entry.isIntersecting) {
             setCurrentDate(date);
+
+            const convertedToDate = new Date(
+              weatherData.hourly.time[dateIndex * 24],
+            );
+            const dayOfWeek = convertedToDate.getDay();
+            setWrittenDayString(writtenDay(dayOfWeek));
+
             setDailyWeatherData({
               sunrise: dateToTime(sunrise[dateIndex]),
               sunset: dateToTime(sunset[dateIndex]),
@@ -58,6 +65,7 @@ const MainWeatherGridSection = ({
             setDailyMoonData({
               moonrise: unixToTime(moonData.daily[dateIndex].moonrise),
               moonset: unixToTime(moonData.daily[dateIndex].moonset),
+              moonPhase: moonData.daily[dateIndex].moon_phase,
             });
           }
         });
@@ -127,6 +135,21 @@ const MainWeatherGridSection = ({
     "relative grid h-8 w-8 place-items-center text-black font-semibold text-sm rounded-sm p-1";
 
   const formattedDate = [];
+  const writtenDay = (value) => {
+    if (value === 0) {
+      return "Sunday";
+    } else if (value === 1) {
+      return "Monday";
+    } else if (value === 2) {
+      return "Tuesday";
+    } else if (value === 3) {
+      return "Wednesday";
+    } else if (value === 4) {
+      return "Thursday";
+    } else if (value === 5) {
+      return "Friday";
+    } else return "Saturday";
+  };
   time.forEach((time, index) => {
     if (index % 24 === 0) {
       const convertedToDate = new Date(time);
@@ -148,9 +171,27 @@ const MainWeatherGridSection = ({
 
   return (
     <div className="sticky top-0">
-      <div className="bg-background z-50 w-auto overflow-y-scroll rounded p-3 text-lg font-bold shadow-lg">
-        <p>{currentDate || "Loading..."}</p>
-        <p>{dailyMoonData.moonrise}</p>
+      <div className="bg-background z-50 flex w-auto gap-2 overflow-y-scroll rounded p-3 text-lg font-bold shadow-lg">
+        <div>
+          <p aria-label={"Day of the week"}>{writtenDayString}</p>
+          <p aria-label={"Date in DD/MM/YYYY format"}>
+            {currentDate || "Loading..."}
+          </p>
+        </div>
+        <div className={`flex gap-2`}>
+          <p>{selectMoonPhaseIcon(dailyMoonData.moonPhase, 40, 40)}</p>
+          <div>
+            <p>{moonPhaseName(dailyMoonData.moonPhase)}</p>
+            <p className={`text-sm font-light`}>
+              <span>^</span>
+              {moonPhaseName(dailyMoonData.moonrise)}
+            </p>
+            <p className={`text-sm font-light`}>
+              <span>^^</span>
+              {moonPhaseName(dailyMoonData.moonset)}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/*TIME GRID SECTION*/}
@@ -158,9 +199,6 @@ const MainWeatherGridSection = ({
         <div
           className={`bg-background/50 flex w-[100px] shrink-0 flex-col items-end gap-1 px-1 text-xs`}
         >
-          {/*<p*/}
-          {/*  className={`flex min-h-16 w-auto items-center text-right text-xs`}*/}
-          {/*></p>*/}
           <p className={`flex min-h-8 w-auto items-center text-right text-xs`}>
             Moon
           </p>
@@ -180,12 +218,6 @@ const MainWeatherGridSection = ({
               data-date={day}
               className=""
             >
-              {/*<div className={`bg-sky-950`}>*/}
-              {/*  <div className={`sticky top-0 left-0 z-50 mx-2 h-16 w-10`}>*/}
-              {/*    {day}*/}
-              {/*  </div>*/}
-              {/*</div>*/}
-
               {/* ---------------Weather Data Grid---------------- */}
               <div className={``}>
                 <MoonParameter

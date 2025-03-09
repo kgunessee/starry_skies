@@ -1,5 +1,6 @@
 import React from "react";
-import { roundHour } from "../unitConversionFunctions.js";
+import { roundHour } from "../conversionFunctions.js";
+import { sunsetIcon, sunriseIcon } from "../SVGIcons.jsx";
 
 export default function TimeParameter({
   time,
@@ -24,9 +25,9 @@ export default function TimeParameter({
 
   const displayNumberOrSunIcon = (value) => {
     if (value === roundHour(dailyWeather.sunrise, dailyWeather)) {
-      return "up";
+      return sunriseIcon;
     } else if (value === roundHour(dailyWeather.sunset, dailyWeather)) {
-      return "down";
+      return sunsetIcon;
     } else return value;
   };
 
