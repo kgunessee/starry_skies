@@ -7,7 +7,7 @@ export default function Header({ handleToggleMenu, isMobileMenuOpen }) {
     >
       <div className={`flex items-center gap-2`}>
         <img
-          src={"public/Starry Skies Logo.svg"}
+          src={"/Starry Skies Logo.svg"}
           alt={`Starry Skies Logo`}
           className={`h-12 w-12`}
         />

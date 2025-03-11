@@ -30,14 +30,14 @@ const displayMoonSymbol = (value, moonData) => {
   if (roundedMoonrise < roundedMoonset) {
     // Standard case: moonrise before moonset
     if (value >= roundedMoonrise && value <= roundedMoonset) {
-      return ""; // Moon is up
+      return moonPhaseIcon; // Moon is up
     } else {
       return ""; // Moon is down
     }
   } else {
     // Moonset before moonrise (moon up overnight)
     if (value >= roundedMoonrise || value <= roundedMoonset) {
-      return ""; // Moon is up
+      return moonPhaseIcon; // Moon is up
     } else {
       return ""; // Moon is down
     }
