@@ -5,6 +5,7 @@ import MainWeatherGridSection from "./components/MainWeatherGridSection.jsx";
 import { useState, useEffect, useRef } from "react";
 import MobileMenu from "./components/MobileMenu.jsx";
 import axios from "axios";
+import { motion, AnimatePresence } from "motion/react";
 
 function App() {
   const [lat, setLat] = useState(51.5072);
@@ -16,6 +17,7 @@ function App() {
   const [moonData, setMoonData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const headerRef = useRef(null);
 
@@ -23,6 +25,8 @@ function App() {
     setLat(latitude);
     setLon(longitude);
   };
+
+  const handleToggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   const fetchWeatherData = async () => {
     if (lat && lon) {
@@ -93,7 +97,10 @@ function App() {
   return (
     <div className={`bg-slate-800 text-gray-50`}>
       <div className={`font-outfit`} ref={headerRef}>
-        <Header />
+        <Header
+          handleToggleMenu={handleToggleMenu}
+          isMobileMenuOpen={isMobileMenuOpen}
+        />
         <LocationInput
           onLocationSelected={handleLocationSelected}
           userLonInput={handleUserInputLon}
@@ -113,10 +120,18 @@ function App() {
           moonData={moonData}
         />
       </main>
-      {/*<MobileMenu*/}
-      {/*  toggleSpeedUnit={handleToggleSpeedUnit}*/}
-      {/*  toggleTempUnit={handleToggleTempUnit}*/}
-      {/*/>*/}
+
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <MobileMenu
+            isMobileMenuOpen={isMobileMenuOpen}
+            toggleSpeedUnit={handleToggleSpeedUnit}
+            toggleTempUnit={handleToggleTempUnit}
+            isKPH={isKPH}
+            isFahrenheit={isFahrenheit}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
