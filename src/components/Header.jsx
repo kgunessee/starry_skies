@@ -3,7 +3,7 @@ import { useState } from "react";
 export default function Header({ handleToggleMenu, isMobileMenuOpen }) {
   return (
     <header
-      className={`flex h-16 items-center justify-between bg-slate-900 p-2`}
+      className={`flex h-16 items-center justify-between bg-card-background mx-2 rounded-md p-2`}
     >
       <div className={`flex items-center gap-2`}>
         <img

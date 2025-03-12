@@ -95,7 +95,7 @@ function App() {
   }, []);
 
   return (
-    <div className={`bg-slate-800 text-gray-50`}>
+    <div className={`text-gray-50`}>
       <div className={`font-outfit`} ref={headerRef}>
         <Header
           handleToggleMenu={handleToggleMenu}

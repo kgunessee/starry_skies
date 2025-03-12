@@ -116,7 +116,8 @@ const MainWeatherGridSection = ({
   const { sunrise, sunset } = weatherData.daily;
 
   const parameterNames = [
-    // "Time (24hr)",
+    "Moon Visibility",
+    "Time (24hr)",
     "Clouds (Total)",
     "Clouds (High)",
     "Clouds (Mid)",
@@ -132,7 +133,7 @@ const MainWeatherGridSection = ({
   ];
 
   const gridItemStyling =
-    "relative grid h-8 w-8 place-items-center text-black font-semibold text-sm rounded-sm p-1";
+    "relative grid h-8 w-8 place-items-center text-black text-sm rounded-sm p-1";
 
   const formattedDate = [];
   const writtenDay = (value) => {
@@ -160,18 +161,18 @@ const MainWeatherGridSection = ({
     }
   });
 
-  let isSyncing = false;
-
-  const handleScroll = (sourceRef, targetRef) => {
-    if (!sourceRef.current || !targetRef.current || isSyncing) return;
-    isSyncing = true;
-    targetRef.current.scrollLeft = sourceRef.current.scrollLeft;
-    isSyncing = false;
-  };
+  // let isSyncing = false;
+  //
+  // const handleScroll = (sourceRef, targetRef) => {
+  //   if (!sourceRef.current || !targetRef.current || isSyncing) return;
+  //   isSyncing = true;
+  //   targetRef.current.scrollLeft = sourceRef.current.scrollLeft;
+  //   isSyncing = false;
+  // };
 
   return (
     <div className="sticky top-0">
-      <div className="bg-background z-50 flex w-auto gap-2 overflow-y-scroll rounded p-3 text-lg font-bold shadow-lg">
+      <div className="bg-white/10 z-50 flex w-auto gap-2 overflow-y-scroll rounded-md p-2 mx-2 text-lg font-bold shadow-lg">
         <div>
           <p aria-label={"Day of the week"}>{writtenDayString}</p>
           <p aria-label={"Date in DD/MM/YYYY format"}>
@@ -194,56 +195,58 @@ const MainWeatherGridSection = ({
         </div>
       </div>
 
-      {/*TIME GRID SECTION*/}
-      <div className={`flex`}>
-        <div
-          className={`bg-background/50 flex w-[100px] shrink-0 flex-col items-end gap-1 px-1 text-xs`}
-        >
-          <p className={`flex min-h-8 w-auto items-center text-right text-xs`}>
-            Moon
-          </p>
-          <p className={`flex min-h-8 w-auto items-center text-right text-xs`}>
-            Time (24hr)
-          </p>
-        </div>
-        <div
-          ref={timeGridRef}
-          onScroll={() => handleScroll(timeGridRef, mainGridRef)}
-          className={`flex gap-4 overflow-y-scroll`}
-        >
-          {formattedDate.map((day, dayIndex) => (
-            <div
-              key={dayIndex}
-              ref={(item) => (sectionRefs.current[dayIndex] = item)}
-              data-date={day}
-              className=""
-            >
-              {/* ---------------Weather Data Grid---------------- */}
-              <div className={``}>
-                <MoonParameter
-                  time={timeToHour(time)}
-                  dayIndex={dayIndex}
-                  moonData={dailyMoonData}
-                  gridItemStyling={gridItemStyling}
-                />
-                <TimeParameter
-                  dailyWeather={dailyWeatherData}
-                  time={timeToHour(time)}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+      {/*TIME & MOON GRID SECTION - SCROLLABLE*/}
+      <div className={`flex mt-2  `}>
+        {/*<div*/}
+        {/*  className={`bg-background/50 flex w-[100px] shrink-0 flex-col items-end gap-1 px-1 text-xs`}*/}
+        {/*>*/}
+        {/*  <p className={`flex min-h-8 w-auto items-center text-right text-xs`}>*/}
+        {/*    Moon*/}
+        {/*  </p>*/}
+        {/*  <p className={`flex min-h-8 w-auto items-center text-right text-xs`}>*/}
+        {/*    Time (24hr)*/}
+        {/*  </p>*/}
+        {/*</div>*/}
+        {/*<div*/}
+        {/*  ref={timeGridRef}*/}
+        {/*  onScroll={() => handleScroll(timeGridRef, mainGridRef)}*/}
+        {/*  className={`flex gap-4 overflow-y-scroll`}*/}
+        {/*>*/}
+        {/*  {formattedDate.map((day, dayIndex) => (*/}
+        {/*    <div*/}
+        {/*      key={dayIndex}*/}
+        {/*      ref={(item) => (sectionRefs.current[dayIndex] = item)}*/}
+        {/*      data-date={day}*/}
+        {/*      className=""*/}
+        {/*    >*/}
+        {/*      /!* ---------------Weather Data Grid---------------- *!/*/}
+        {/*      <div className={``}>*/}
+        {/*        <MoonParameter*/}
+        {/*          time={timeToHour(time)}*/}
+        {/*          dayIndex={dayIndex}*/}
+        {/*          moonData={dailyMoonData}*/}
+        {/*          gridItemStyling={gridItemStyling}*/}
+        {/*        />*/}
+        {/*        <TimeParameter*/}
+        {/*          dailyWeather={dailyWeatherData}*/}
+        {/*          time={timeToHour(time)}*/}
+        {/*          dayIndex={dayIndex}*/}
+        {/*          gridItemStyling={gridItemStyling}*/}
+        {/*        />*/}
+        {/*      </div>*/}
+        {/*    </div>*/}
+        {/*  ))}*/}
+        {/*</div>*/}
       </div>
-      {/*MAIN GRID SECTION*/}
+      {/*--------------------GRID SECTION-------------------------*/}
       <section
         style={{ maxHeight: `${mainSectionHeight}px` }}
-        className={`flex overflow-scroll`}
+        className={`flex mx-2 bg-white/10 rounded-md p-2 overflow-scroll`}
       >
+        {/* ---------------Parameter Names---------------- */}
+
         <div
-          className={`flex w-[100px] shrink-0 flex-col items-end gap-1 px-1`}
+          className={`flex w-[90px] shrink-0 flex-col items-end gap-1 px-1`}
         >
           {parameterNames.map((name) => {
             return (
@@ -256,11 +259,10 @@ const MainWeatherGridSection = ({
             );
           })}
         </div>
-
-        {/* ------------------Scrollable Weather Sections--------------------- */}
+        {/* ---------------Weather Data Grid---------------- */}
         <div
           ref={mainGridRef}
-          onScroll={() => handleScroll(mainGridRef, timeGridRef)}
+          // onScroll={() => handleScroll(mainGridRef, timeGridRef)}
           className="flex h-max gap-4 overflow-x-auto"
         >
           {formattedDate.map((day, dayIndex) => (
@@ -270,8 +272,20 @@ const MainWeatherGridSection = ({
               data-date={day}
               className=""
             >
-              {/* ---------------Weather Data Grid---------------- */}
+
               <div>
+                <MoonParameter
+                  time={timeToHour(time)}
+                  dayIndex={dayIndex}
+                  moonData={dailyMoonData}
+                  gridItemStyling={gridItemStyling}
+                />
+                <TimeParameter
+                  dailyWeather={dailyWeatherData}
+                  time={timeToHour(time)}
+                  dayIndex={dayIndex}
+                  gridItemStyling={gridItemStyling}
+                />
                 <CloudParameter
                   clouds={cloud_cover}
                   dayIndex={dayIndex}

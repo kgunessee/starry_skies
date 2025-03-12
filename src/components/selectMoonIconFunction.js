@@ -35,11 +35,11 @@ export const selectMoonPhaseIcon = (moonPhase, height, width) => {
   } else if (moonPhase >= 0.45 && moonPhase <= 0.54) {
     return fullMoon(height, width);
   } else if (moonPhase >= 0.55 && moonPhase <= 0.57) {
-    return waningGibbous1(height, width);
+    return waningGibbous3(height, width);
   } else if (moonPhase >= 0.58 && moonPhase <= 0.6) {
     return waningGibbous2(height, width);
   } else if (moonPhase >= 0.61 && moonPhase <= 0.64) {
-    return waningGibbous3(height, width);
+    return waningGibbous1(height, width);
   } else if (moonPhase >= 0.65 && moonPhase <= 0.74) {
     return thirdQuarter(height, width);
   } else if (moonPhase >= 0.75 && moonPhase <= 0.77) {

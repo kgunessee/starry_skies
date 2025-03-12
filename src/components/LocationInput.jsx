@@ -93,7 +93,7 @@ const LocationInput = ({
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
-    <section className={`m-2`} aria-label="Location Input">
+    <section className={`m-2 p-2 bg-white/10 rounded-md`} aria-label="Location Input">
       <div className={`flex flex-col gap-2`}>
         <div className={`flex w-full gap-2`}>
           <div className="flex-grow">
