@@ -10,7 +10,7 @@
     --color-trafficAmber: #EAC94A;
     --color-trafficRed: #E57373;
     --color-accentBlue: #0E648B;
-    --color-nighttime: #152D62;
+    --color-nighttime: #151d3d;
     --color-daylight: #FFD54F;
     --color-sunset: #CAAE42;
     --color-buttonBlue: #3599d5;
@@ -20,9 +20,10 @@
 /*0D224F*/
 body{
     background: #0C152C;
-    background: linear-gradient(35deg, #0C152C 60%, #0f1c3b 90%);
+    background: linear-gradient(35deg, #070b1e 0%, #0C152C 40%, #0f1c3b 100%);
     padding: 0.5rem 0;
     min-height: 100vh;
+
 }
 
 .pac-container {

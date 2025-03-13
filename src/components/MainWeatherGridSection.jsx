@@ -18,7 +18,7 @@ import MoonParameter from "./weather-parameters/MoonParameter.jsx";
 const MainWeatherGridSection = ({
   isKPH,
   isFarenheit,
-  mainSectionHeight,
+  // mainSectionHeight,
   loading,
   weatherData,
   error,
@@ -62,11 +62,11 @@ const MainWeatherGridSection = ({
               sunrise: dateToTime(sunrise[dateIndex]),
               sunset: dateToTime(sunset[dateIndex]),
             });
-            setDailyMoonData({
-              moonrise: unixToTime(moonData.daily[dateIndex].moonrise),
-              moonset: unixToTime(moonData.daily[dateIndex].moonset),
-              moonPhase: moonData.daily[dateIndex].moon_phase,
-            });
+            // setDailyMoonData({
+            //   moonrise: unixToTime(moonData.daily[dateIndex].moonrise),
+            //   moonset: unixToTime(moonData.daily[dateIndex].moonset),
+            //   moonPhase: moonData.daily[dateIndex].moon_phase,
+            // });
           }
         });
       },
@@ -91,6 +91,22 @@ const MainWeatherGridSection = ({
   useEffect(() => {
     isFarenheit ? setTempUnit("F") : setTempUnit("C");
   }, [isFarenheit]);
+
+  // useEffect(() => {
+  //   if (moonData) {
+  //     for (let i = 0; i < 7; i++) {
+  //       setDailyMoonData(prev =>{
+  //         moonrise: unixToTime(moonData.daily[i].moonrise),
+  //         moonset: unixToTime(moonData.daily[i].moonset),
+  //         moonPhase: moonData.daily[i].moon_phase,
+  //       });
+  //     }
+  //   }
+  // }, [moonData]);
+  //
+  // if (dailyMoonData) {
+  //   console.log(dailyMoonData);
+  // }
 
   if (loading) return <div>Loading weather...</div>;
   if (error) return <div>Error fetching weather: {error.message}</div>;
@@ -172,7 +188,7 @@ const MainWeatherGridSection = ({
 
   return (
     <div className="sticky top-0">
-      <div className="bg-white/10 z-50 flex w-auto gap-2 overflow-y-scroll rounded-md p-2 mx-2 text-lg font-bold shadow-lg">
+      <div className="z-50 mx-2 flex w-auto gap-2 overflow-y-scroll rounded-md bg-white/10 p-2 text-lg font-bold shadow-lg">
         <div>
           <p aria-label={"Day of the week"}>{writtenDayString}</p>
           <p aria-label={"Date in DD/MM/YYYY format"}>
@@ -196,7 +212,7 @@ const MainWeatherGridSection = ({
       </div>
 
       {/*TIME & MOON GRID SECTION - SCROLLABLE*/}
-      <div className={`flex mt-2  `}>
+      <div className={`mt-2 flex`}>
         {/*<div*/}
         {/*  className={`bg-background/50 flex w-[100px] shrink-0 flex-col items-end gap-1 px-1 text-xs`}*/}
         {/*>*/}
@@ -240,14 +256,12 @@ const MainWeatherGridSection = ({
       </div>
       {/*--------------------GRID SECTION-------------------------*/}
       <section
-        style={{ maxHeight: `${mainSectionHeight}px` }}
-        className={`flex mx-2 bg-white/10 rounded-md p-2 overflow-scroll`}
+        // style={{ maxHeight: `${mainSectionHeight}px overflow-scroll` }}
+        className={`mx-2 flex rounded-md bg-white/10 p-2`}
       >
         {/* ---------------Parameter Names---------------- */}
 
-        <div
-          className={`flex w-[90px] shrink-0 flex-col items-end gap-1 px-1`}
-        >
+        <div className={`flex w-[90px] shrink-0 flex-col items-end gap-1 px-1`}>
           {parameterNames.map((name) => {
             return (
               <p
@@ -260,95 +274,110 @@ const MainWeatherGridSection = ({
           })}
         </div>
         {/* ---------------Weather Data Grid---------------- */}
-        <div
-          ref={mainGridRef}
-          // onScroll={() => handleScroll(mainGridRef, timeGridRef)}
-          className="flex h-max gap-4 overflow-x-auto"
-        >
-          {formattedDate.map((day, dayIndex) => (
-            <div
-              key={dayIndex}
-              ref={(item) => (sectionRefs.current[dayIndex] = item)}
-              data-date={day}
-              className=""
-            >
+        <div>
+          <div className={`flex gap-1`}>
+            <div className={`h-8 w-8 bg-blue-300`}>
+              {dailyMoonData.moonrise}
+            </div>
+            <div className={`h-8 w-8 bg-blue-300`}></div>
+          </div>
 
-              <div>
+          <div
+            ref={mainGridRef}
+            // onScroll={() => handleScroll(mainGridRef, timeGridRef)}
+            className="flex h-max gap-4 overflow-x-auto"
+          >
+            {formattedDate.map((day, dayIndex) => (
+              <div
+                key={dayIndex}
+                ref={(item) => (sectionRefs.current[dayIndex] = item)}
+                data-date={day}
+                className=""
+              >
                 <MoonParameter
                   time={timeToHour(time)}
                   dayIndex={dayIndex}
                   moonData={dailyMoonData}
                   gridItemStyling={gridItemStyling}
                 />
-                <TimeParameter
-                  dailyWeather={dailyWeatherData}
-                  time={timeToHour(time)}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                />
-                <CloudParameter
-                  clouds={cloud_cover}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                />
-                <CloudParameter
-                  clouds={cloud_cover_high}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                />
-                <CloudParameter
-                  clouds={cloud_cover_mid}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                />
-                <CloudParameter
-                  clouds={cloud_cover_low}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                />
-                <WeatherTypeParameter
-                  weatherType={weather_code}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                  dailyWeather={dailyWeatherData}
-                  time={timeToHour(time)}
-                />
 
-                <PrecipitationParameter
-                  precipitation={precipitation_probability}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                />
-                <WindParameter
-                  windSpeed={wind_speed_10m}
-                  windGusts={wind_gusts_10m}
-                  windDirection={wind_direction_10m}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                  isKPH={isKPH}
-                />
+                <div>
+                  {/*<MoonParameter*/}
+                  {/*  time={timeToHour(time)}*/}
+                  {/*  dayIndex={dayIndex}*/}
+                  {/*  moonData={dailyMoonData}*/}
+                  {/*  gridItemStyling={gridItemStyling}*/}
+                  {/*/>*/}
+                  <TimeParameter
+                    dailyWeather={dailyWeatherData}
+                    time={timeToHour(time)}
+                    dayIndex={dayIndex}
+                    gridItemStyling={gridItemStyling}
+                  />
+                  <CloudParameter
+                    clouds={cloud_cover}
+                    dayIndex={dayIndex}
+                    gridItemStyling={gridItemStyling}
+                  />
+                  <CloudParameter
+                    clouds={cloud_cover_high}
+                    dayIndex={dayIndex}
+                    gridItemStyling={gridItemStyling}
+                  />
+                  <CloudParameter
+                    clouds={cloud_cover_mid}
+                    dayIndex={dayIndex}
+                    gridItemStyling={gridItemStyling}
+                  />
+                  <CloudParameter
+                    clouds={cloud_cover_low}
+                    dayIndex={dayIndex}
+                    gridItemStyling={gridItemStyling}
+                  />
+                  <WeatherTypeParameter
+                    weatherType={weather_code}
+                    dayIndex={dayIndex}
+                    gridItemStyling={gridItemStyling}
+                    dailyWeather={dailyWeatherData}
+                    time={timeToHour(time)}
+                  />
 
-                <TemperatureParameter
-                  temp={temperature_2m}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                  isFarenheit={isFarenheit}
-                />
-                <HumidityParameter
-                  humidity={relative_humidity_2m}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                />
-                <DewPointParameter
-                  dewPoint={dew_point_2m}
-                  dayIndex={dayIndex}
-                  gridItemStyling={gridItemStyling}
-                  additionalWeatherVariable={temperature_2m}
-                  isFarenheit={isFarenheit}
-                />
+                  <PrecipitationParameter
+                    precipitation={precipitation_probability}
+                    dayIndex={dayIndex}
+                    gridItemStyling={gridItemStyling}
+                  />
+                  <WindParameter
+                    windSpeed={wind_speed_10m}
+                    windGusts={wind_gusts_10m}
+                    windDirection={wind_direction_10m}
+                    dayIndex={dayIndex}
+                    gridItemStyling={gridItemStyling}
+                    isKPH={isKPH}
+                  />
+
+                  <TemperatureParameter
+                    temp={temperature_2m}
+                    dayIndex={dayIndex}
+                    gridItemStyling={gridItemStyling}
+                    isFarenheit={isFarenheit}
+                  />
+                  <HumidityParameter
+                    humidity={relative_humidity_2m}
+                    dayIndex={dayIndex}
+                    gridItemStyling={gridItemStyling}
+                  />
+                  <DewPointParameter
+                    dewPoint={dew_point_2m}
+                    dayIndex={dayIndex}
+                    gridItemStyling={gridItemStyling}
+                    additionalWeatherVariable={temperature_2m}
+                    isFarenheit={isFarenheit}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
     </div>
