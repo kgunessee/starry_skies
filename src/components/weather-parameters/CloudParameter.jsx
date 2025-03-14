@@ -6,7 +6,7 @@ export default function CloudParameter({ clouds, dayIndex, gridItemStyling }) {
       {clouds.slice(dayIndex * 24, dayIndex * 24 + 24).map((item, index) => (
         <div
           key={`grid-item-${index}`}
-          className={`${gridItemStyling} bg-accentBlue`}
+          className={`${gridItemStyling} bg-nighttime`}
         >
           <div
             style={{ opacity: item / 100 }}

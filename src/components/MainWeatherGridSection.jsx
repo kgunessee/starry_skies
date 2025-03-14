@@ -18,7 +18,7 @@ import MoonParameter from "./weather-parameters/MoonParameter.jsx";
 const MainWeatherGridSection = ({
   isKPH,
   isFarenheit,
-  mainSectionHeight,
+  // mainSectionHeight,
   loading,
   weatherData,
   error,
@@ -172,7 +172,8 @@ const MainWeatherGridSection = ({
 
   return (
     <div className="sticky top-0">
-      <div className="bg-white/10 z-50 flex w-auto gap-2 overflow-y-scroll rounded-md p-2 mx-2 text-lg font-bold shadow-lg">
+
+      <div className="z-50 mx-2 flex w-auto gap-2 overflow-y-scroll rounded-md bg-white/10 p-2 text-lg font-bold shadow-lg">
         <div>
           <p aria-label={"Day of the week"}>{writtenDayString}</p>
           <p aria-label={"Date in DD/MM/YYYY format"}>
@@ -196,7 +197,7 @@ const MainWeatherGridSection = ({
       </div>
 
       {/*TIME & MOON GRID SECTION - SCROLLABLE*/}
-      <div className={`flex mt-2  `}>
+      <div className={`mt-2 flex`}>
         {/*<div*/}
         {/*  className={`bg-background/50 flex w-[100px] shrink-0 flex-col items-end gap-1 px-1 text-xs`}*/}
         {/*>*/}
@@ -240,14 +241,12 @@ const MainWeatherGridSection = ({
       </div>
       {/*--------------------GRID SECTION-------------------------*/}
       <section
-        style={{ maxHeight: `${mainSectionHeight}px` }}
-        className={`flex mx-2 bg-white/10 rounded-md p-2 overflow-scroll`}
+        // style={{ maxHeight: `${mainSectionHeight}px overflow-scroll` }}
+        className={`mx-2 flex rounded-md bg-white/10 p-2`}
       >
         {/* ---------------Parameter Names---------------- */}
 
-        <div
-          className={`flex w-[90px] shrink-0 flex-col items-end gap-1 px-1`}
-        >
+        <div className={`flex w-[90px] shrink-0 flex-col items-end gap-1 px-1`}>
           {parameterNames.map((name) => {
             return (
               <p
@@ -272,13 +271,13 @@ const MainWeatherGridSection = ({
               data-date={day}
               className=""
             >
-
               <div>
                 <MoonParameter
                   time={timeToHour(time)}
-                  dayIndex={dayIndex}
-                  moonData={dailyMoonData}
+                  moonData={moonData}
                   gridItemStyling={gridItemStyling}
+                  dayIndex={dayIndex}
+
                 />
                 <TimeParameter
                   dailyWeather={dailyWeatherData}

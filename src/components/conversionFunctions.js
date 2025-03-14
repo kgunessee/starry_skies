@@ -38,8 +38,8 @@ export const handleCelciusToFarenheit = (celcius, isFarenheit) => {
   } else return celcius;
 };
 
-export const roundHour = (timeString, checkWeatherIsNull) => {
-  if (timeString && checkWeatherIsNull) {
+export const roundHour = (timeString) => {
+  if (timeString) {
     const [hour, minute] = timeString.split(":").map(Number);
     return minute >= 30 ? hour + 1 : hour;
   }

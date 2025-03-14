@@ -12,7 +12,7 @@ function App() {
   const [lon, setLon] = useState(-0.1275);
   const [isKPH, setKPH] = useState(false);
   const [isFahrenheit, setIsFahrenheit] = useState(false);
-  const [headerHeight, setHeaderHeight] = useState(500);
+  // const [headerHeight, setHeaderHeight] = useState(500);
   const [weatherData, setWeatherData] = useState(null);
   const [moonData, setMoonData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -55,7 +55,7 @@ function App() {
     fetchWeatherData();
   }, []);
 
-  console.log(moonData);
+  // console.log(moonData);
 
   const handleToggleSpeedUnit = () => {
     setKPH(!isKPH);
@@ -74,25 +74,25 @@ function App() {
   };
 
   // Calculate the height of the header & location section and subtract this from the window height. Use this to set the max height of the main div to enable scroll behaviour on smaller screens.
-  const calcMainElHeight = () => {
-    const headerHeight = headerRef.current.getBoundingClientRect().height;
-    const windowHeight = window.innerHeight;
-    setHeaderHeight(windowHeight - headerHeight);
-  };
-
-  useEffect(() => {
-    calcMainElHeight();
-
-    const handleResize = () => {
-      calcMainElHeight();
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  // const calcMainElHeight = () => {
+  //   const headerHeight = headerRef.current.getBoundingClientRect().height;
+  //   const windowHeight = window.innerHeight;
+  //   setHeaderHeight(windowHeight - headerHeight);
+  // };
+  //
+  // useEffect(() => {
+  //   calcMainElHeight();
+  //
+  //   const handleResize = () => {
+  //     calcMainElHeight();
+  //   };
+  //
+  //   window.addEventListener("resize", handleResize);
+  //
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, []);
 
   return (
     <div className={`text-gray-50`}>
@@ -113,7 +113,7 @@ function App() {
         <MainWeatherGridSection
           isKPH={isKPH}
           isFarenheit={isFahrenheit}
-          mainSectionHeight={headerHeight}
+          // mainSectionHeight={headerHeight}
           loading={loading}
           error={error}
           weatherData={weatherData}

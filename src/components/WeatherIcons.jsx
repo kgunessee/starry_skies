@@ -29,7 +29,7 @@ export const drizzle = (
     xmlns="http://www.w3.org/2000/svg"
     width="20"
     height="20"
-    fill="currentColor"
+    fill="#e3e3e3"
     className="bi bi-cloud-drizzle"
     viewBox="0 0 16 16"
   >
@@ -42,7 +42,7 @@ export const fog = (
     xmlns="http://www.w3.org/2000/svg"
     width="20"
     height="20"
-    fill="currentColor"
+    fill="#e3e3e3"
     className="bi bi-water"
     viewBox="0 0 16 16"
   >
@@ -55,7 +55,7 @@ export const heavyRain = (
     xmlns="http://www.w3.org/2000/svg"
     width="20"
     height="20"
-    fill="currentColor"
+    fill="#e3e3e3"
     className="bi bi-cloud-rain-heavy"
     viewBox="0 0 16 16"
   >
@@ -68,7 +68,7 @@ export const lightning = (
     xmlns="http://www.w3.org/2000/svg"
     width="20"
     height="20"
-    fill="currentColor"
+    fill="#e3e3e3"
     className="bi bi-cloud-lightning"
     viewBox="0 0 16 16"
   >
@@ -81,7 +81,7 @@ export const lightRain = (
     xmlns="http://www.w3.org/2000/svg"
     width="20"
     height="20"
-    fill="currentColor"
+    fill="#e3e3e3"
     className="bi bi-cloud-drizzle"
     viewBox="0 0 16 16"
   >
@@ -94,7 +94,7 @@ export const moderateRain = (
     xmlns="http://www.w3.org/2000/svg"
     width="20"
     height="20"
-    fill="currentColor"
+    fill="#e3e3e3"
     className="bi bi-cloud-rain"
     viewBox="0 0 16 16"
   >
@@ -107,7 +107,7 @@ export const partlyCloudy = (
     xmlns="http://www.w3.org/2000/svg"
     width="20"
     height="20"
-    fill="currentColor"
+    fill="#e3e3e3"
     className="bi bi-cloud-sun"
     viewBox="0 0 16 16"
   >
@@ -121,7 +121,7 @@ export const snow = (
     xmlns="http://www.w3.org/2000/svg"
     width="20"
     height="20"
-    fill="currentColor"
+    fill="#e3e3e3"
     className="bi bi-cloud-snow"
     viewBox="0 0 16 16"
   >

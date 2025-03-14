@@ -1,64 +1,59 @@
-import { roundHour } from "../conversionFunctions.js";
-import { moonIcon } from "../SVGIcons.jsx";
-import { selectMoonPhaseIcon } from "../selectMoonIconFunction.js";
-
-const displayMoonSymbol = (value, moonData) => {
-  if (!moonData || !moonData.moonrise || !moonData.moonset) {
-    return value; // Or a default value if data is missing
-  }
-
-  const roundedMoonrise = roundHour(moonData.moonrise, moonData);
-  const roundedMoonset = roundHour(moonData.moonset, moonData);
-  const moonPhaseIcon = selectMoonPhaseIcon(moonData.moonPhase, 20, 20);
-
-  // if (roundedMoonrise < roundedMoonset) {
-  //   // Standard case: moonrise before moonset
-  //   if (value >= roundedMoonrise && value <= roundedMoonset) {
-  //     return moonPhaseIcon; // Moon is up
-  //   } else {
-  //     return ""; // Moon is down
-  //   }
-  // } else {
-  //   // Moonset before moonrise (moon up overnight)
-  //   if (value >= roundedMoonrise || value <= roundedMoonset) {
-  //     return moonPhaseIcon; // Moon is up
-  //   } else {
-  //     return ""; // Moon is down
-  //   }
-  // }
-
-  if (roundedMoonrise < roundedMoonset) {
-    // Standard case: moonrise before moonset
-    if (value >= roundedMoonrise && value <= roundedMoonset) {
-      return moonPhaseIcon; // Moon is up
-    } else {
-      return ""; // Moon is down
-    }
-  } else {
-    // Moonset before moonrise (moon up overnight)
-    if (value >= roundedMoonrise || value <= roundedMoonset) {
-      return moonPhaseIcon; // Moon is up
-    } else {
-      return ""; // Moon is down
-    }
-  }
-};
+import { useState, useEffect } from "react";
+import { unixToTime, roundHour } from "../conversionFunctions.js";
+import {selectMoonPhaseIcon} from "../selectMoonIconFunction.js";
 
 export default function MoonParameter({
   time,
-  dayIndex,
   gridItemStyling,
   moonData,
+  dayIndex,
 }) {
+  const [dailyMoon, setDailyMoon] = useState([]);
+
+  useEffect(() => {
+    if (moonData && moonData.daily) {
+      const newMoonData = [];
+      for (let i = 0; i < 7; i++) {
+        newMoonData.push({
+          moonrise: roundHour(unixToTime(moonData.daily[i].moonrise)),
+          moonset: roundHour(unixToTime(moonData.daily[i].moonset)),
+          moonPhase: moonData.daily[i].moon_phase
+        });
+      }
+      setDailyMoon(newMoonData);
+    }
+  }, [moonData]);
+
+  useEffect(() => {
+    console.log(dailyMoon);
+  }, [dailyMoon]); //changed dependancy array.
+
+  const moonVisable = (time, i) => {
+    const {moonrise, moonset, moonPhase} = dailyMoon[i]
+    if (dailyMoon && moonrise < moonset) {
+      // Standard case: moonrise before moonset
+      if (time >= moonrise && time <= moonset) {
+        return selectMoonPhaseIcon(moonPhase, 20, 20); // Moon is up
+      } else {
+        return ""; // Moon is down
+      }
+    } else {
+      // Moonset before moonrise (moon up overnight)
+      if (time >= moonrise || time <= moonset) {
+        return selectMoonPhaseIcon(moonPhase, 20, 20); // Moon is up
+      } else {
+        return ""; // Moon is down
+      }
+    }
+  };
+
+
   return (
     <div className="mb-1 flex gap-1">
       {time.slice(dayIndex * 24, dayIndex * 24 + 24).map((item, index) => (
-        <div
-          key={`grid-item-${index}`}
-          className={`${gridItemStyling} bg-accentBlue/20`}
-        >
-          <div key={index} className={`text-white`}>
-            {moonData && displayMoonSymbol(item, moonData)}
+        <div key={`grid-item-${index}`} className={`${gridItemStyling} bg-white/5`}>
+          <div key={index} className={`text-gray-50`}>
+            {dailyMoon[dayIndex] && moonVisable(item, dayIndex)}
           </div>
         </div>
       ))}
