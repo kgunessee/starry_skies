@@ -14,6 +14,7 @@ import {
   moonPhaseName,
 } from "./selectMoonIconFunction.js";
 import MoonParameter from "./weather-parameters/MoonParameter.jsx";
+import {caretDownFill, caretUpFill} from "./SVGIcons.jsx";
 
 const MainWeatherGridSection = ({
   isKPH,
@@ -173,7 +174,7 @@ const MainWeatherGridSection = ({
   return (
     <div className="sticky top-0">
 
-      <div className="z-50 mx-2 flex w-auto gap-2 overflow-y-scroll rounded-md bg-white/10 p-2 text-lg font-bold shadow-lg">
+      <div className="z-50 mx-2 grid grid-cols-2 w-auto gap-2 overflow-y-scroll rounded-md bg-white/10 p-2 text-lg font-bold shadow-lg">
         <div>
           <p aria-label={"Day of the week"}>{writtenDayString}</p>
           <p aria-label={"Date in DD/MM/YYYY format"}>
@@ -184,13 +185,13 @@ const MainWeatherGridSection = ({
           <p>{selectMoonPhaseIcon(dailyMoonData.moonPhase, 40, 40)}</p>
           <div>
             <p>{moonPhaseName(dailyMoonData.moonPhase)}</p>
-            <p className={`text-sm font-light`}>
-              <span>^</span>
-              {moonPhaseName(dailyMoonData.moonrise)}
+            <p className={`text-sm flex -ml-0.5 items-center font-light`}>
+              <span>{caretUpFill}</span>
+              {dailyMoonData.moonrise}
             </p>
-            <p className={`text-sm font-light`}>
-              <span>^^</span>
-              {moonPhaseName(dailyMoonData.moonset)}
+            <p className={`text-sm flex -ml-0.5 items-center font-light`}>
+              <span>{caretDownFill}</span>
+              {dailyMoonData.moonset}
             </p>
           </div>
         </div>
