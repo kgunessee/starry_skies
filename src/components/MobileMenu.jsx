@@ -7,6 +7,7 @@ export default function MobileMenu({
   isMobileMenuOpen,
   isFahrenheit,
   isKPH,
+  handleWeatherModel,
 }) {
   return (
     <motion.menu
@@ -31,6 +32,26 @@ export default function MobileMenu({
           rightUnit={"F"}
           isToggled={isFahrenheit}
         />
+
+        <div>
+          <h3>Select Weather Model</h3>
+          <label htmlFor={"ukmo"}>UKMO (UK Met Office)</label>
+          <input
+            type={"radio"}
+            id={"ukmo"}
+            name={"weather-model"}
+            value={"ukmo_seamless"}
+            onClick={(e) => handleWeatherModel(e.target.value)}
+          />
+          <label htmlFor={"ecmwf"}>ECMWF (Europe)</label>
+          <input
+            type={"radio"}
+            id={"ecmwf"}
+            name={"weather-model"}
+            value={"ecmwf_ifs025"}
+            onClick={(e) => handleWeatherModel(e.target.value)}
+          />
+        </div>
       </div>
     </motion.menu>
   );

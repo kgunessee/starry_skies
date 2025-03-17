@@ -20,7 +20,7 @@ const LocationInput = ({
   });
   const [inputValue, setInputValue] = useState("");
   const [latValue, setLatValue] = useState("51.5072");
-  const [lonValue, setLonValue] = useState("-0.1275");
+  const [lonValue, setLonValue] = useState("-0.145");
   const [geoLoading, setGeoLoading] = useState(false);
 
   const autocompleteRef = useRef(null);
@@ -93,7 +93,10 @@ const LocationInput = ({
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
-    <section className={`m-2 p-2 bg-white/10 rounded-md`} aria-label="Location Input">
+    <section
+      className={`m-2 rounded-md bg-white/10 p-2`}
+      aria-label="Location Input"
+    >
       <div className={`flex flex-col gap-2`}>
         <div className={`flex w-full gap-2`}>
           <div className="flex-grow">

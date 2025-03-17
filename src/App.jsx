@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "motion/react";
 
 function App() {
   const [lat, setLat] = useState(51.5072);
-  const [lon, setLon] = useState(-0.1275);
+  const [lon, setLon] = useState(-0.145);
   const [isKPH, setKPH] = useState(false);
   const [isFahrenheit, setIsFahrenheit] = useState(false);
   // const [headerHeight, setHeaderHeight] = useState(500);
@@ -18,6 +18,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [weatherModel, setWeatherModel] = useState("ukmo_seamless");
+  // ecmwf_ifs025
 
   const headerRef = useRef(null);
 
@@ -26,12 +28,16 @@ function App() {
     setLon(longitude);
   };
 
+  const handleWeatherModel = (model) => {
+    setWeatherModel(model);
+  };
+
   const handleToggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   const fetchWeatherData = async () => {
     if (lat && lon) {
       const openWeatherAPIKey = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
-      const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation_probability,precipitation,rain,showers,weather_code,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=sunrise,sunset,daylight_duration&wind_speed_unit=mph&timezone=auto`;
+      const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation_probability,precipitation,rain,showers,weather_code,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=sunrise,sunset,daylight_duration&wind_speed_unit=mph&timezone=auto&models=${weatherModel}`;
       const openWeatherMapUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude={part}&appid=${openWeatherAPIKey}`;
       setError(null);
 
@@ -54,6 +60,10 @@ function App() {
   useEffect(() => {
     fetchWeatherData();
   }, []);
+
+  useEffect(() => {
+    console.log(weatherModel);
+  }, [weatherModel]);
 
   // console.log(moonData);
 
@@ -129,6 +139,7 @@ function App() {
             toggleTempUnit={handleToggleTempUnit}
             isKPH={isKPH}
             isFahrenheit={isFahrenheit}
+            handleWeatherModel={handleWeatherModel}
           />
         )}
       </AnimatePresence>
