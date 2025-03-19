@@ -13,12 +13,12 @@ import {
 import "@geoapify/geocoder-autocomplete/styles/minimal.css";
 
 const LocationInput = ({
-                         onLocationSelected,
-                         userLonInput,
-                         userLatInput,
-                         fetchWeatherData,
-                         loading,
-                       }) => {
+  onLocationSelected,
+  userLonInput,
+  userLatInput,
+  fetchWeatherData,
+  loading,
+}) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // Replace with your API key
     libraries,
@@ -47,7 +47,12 @@ const LocationInput = ({
   // };
 
   const handlePlaceChanged = (value) => {
-    if (value && value.properties && value.properties.lat && value.properties.lon){
+    if (
+      value &&
+      value.properties &&
+      value.properties.lat &&
+      value.properties.lon
+    ) {
       const lat = value.properties.lat;
       const lon = value.properties.lon;
       onLocationSelected(lat, lon);
@@ -94,7 +99,7 @@ const LocationInput = ({
       <div className={`flex flex-col gap-2`}>
         <div className={`flex w-full gap-2`}>
           <div className="flex-grow">
-            <GeoapifyContext apiKey="b9a42a277312407c90be3a00db2b2ef2">
+            <GeoapifyContext apiKey={import.meta.env.VITE_GEOAPIFY_API_KEY}>
               <GeoapifyGeocoderAutocomplete
                 placeholder="Enter address here"
                 value={inputValue}

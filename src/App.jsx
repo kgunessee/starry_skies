@@ -122,7 +122,7 @@ function App() {
       <main className={`font-outfit relative`}>
         <MainWeatherGridSection
           isKPH={isKPH}
-          isFarenheit={isFahrenheit}
+          isFahrenheit={isFahrenheit}
           // mainSectionHeight={headerHeight}
           loading={loading}
           error={error}
