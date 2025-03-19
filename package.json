@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@geoapify/geocoder-autocomplete": "^2.1.0",
+    "@geoapify/react-geocoder-autocomplete": "^2.0.1",
     "@react-google-maps/api": "^2.20.6",
     "@tailwindcss/vite": "^4.0.9",
     "axios": "^1.8.4",

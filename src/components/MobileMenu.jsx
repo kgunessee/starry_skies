@@ -38,6 +38,7 @@ export default function MobileMenu({
           <label htmlFor={"ukmo"}>UKMO (UK Met Office)</label>
           <input
             type={"radio"}
+            checked={true}
             id={"ukmo"}
             name={"weather-model"}
             value={"ukmo_seamless"}

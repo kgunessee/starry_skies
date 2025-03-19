@@ -43,11 +43,11 @@ export const selectMoonPhaseIcon = (moonPhase, height, width) => {
   } else if (moonPhase >= 0.65 && moonPhase <= 0.74) {
     return thirdQuarter(height, width);
   } else if (moonPhase >= 0.75 && moonPhase <= 0.77) {
-    return waningCrescent1(height, width);
+    return waningCrescent3(height, width);
   } else if (moonPhase >= 0.78 && moonPhase <= 0.8) {
     return waningCrescent2(height, width);
   } else if (moonPhase >= 0.81 && moonPhase <= 0.84) {
-    return waningCrescent3(height, width);
+    return waningCrescent1(height, width);
   } else {
     return newMoon(height, width);
   }

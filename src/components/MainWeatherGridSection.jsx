@@ -19,7 +19,7 @@ import {
   selectMoonPhaseIcon,
   moonPhaseName,
 } from "./selectMoonIconFunction.js";
-import {caretDownFill, caretUpFill} from "./SVGIcons.jsx";
+import { caretDownFill, caretUpFill } from "./SVGIcons.jsx";
 
 //--------------------------------------------------------------------------------------//
 
@@ -28,6 +28,7 @@ const MainWeatherGridSection = ({
   isFahrenheit,
   loading,
   weatherData,
+  weatherModel,
   error,
   moonData,
 }) => {
@@ -37,6 +38,7 @@ const MainWeatherGridSection = ({
   const [dailyWeatherData, setDailyWeatherData] = useState({});
   const [dailyMoonData, setDailyMoonData] = useState({});
   const [writtenDayString, setWrittenDayString] = useState("");
+  const [precipitationUnit, setPrecipitationUnit] = useState("mm");
 
   const sectionRefs = useRef([]);
   const mainGridRef = useRef(null);
@@ -98,6 +100,18 @@ const MainWeatherGridSection = ({
     isFahrenheit ? setTempUnit("F") : setTempUnit("C");
   }, [isFahrenheit]);
 
+  useEffect(() => {
+    if (weatherData && weatherData.hourly) {
+      console.log(weatherData.hourly);
+    }
+  }, []);
+
+  useEffect(() => {
+    weatherModel === "ukmo_seamless"
+      ? setPrecipitationUnit("mm")
+      : setPrecipitationUnit("%");
+  }, [weatherModel]);
+
   if (loading) return <div>Loading weather...</div>;
   if (error) return <div>Error fetching weather: {error.message}</div>;
   if (!weatherData) return <div>Enter a location to see the weather.</div>;
@@ -110,6 +124,7 @@ const MainWeatherGridSection = ({
     cloud_cover_mid,
     cloud_cover_high,
     precipitation_probability,
+    precipitation,
     weather_code,
     wind_speed_10m,
     wind_direction_10m,
@@ -129,8 +144,8 @@ const MainWeatherGridSection = ({
     "Clouds (Mid)",
     "Clouds (Low)",
     "Weather",
-    "Precipitation (%)",
     `Wind (${speedUnit})`,
+    `Precipitation (${precipitationUnit})`,
     "Wind Direction",
     `Gusts (${speedUnit})`,
     `Temperature (°${tempUnit})`,
@@ -167,29 +182,47 @@ const MainWeatherGridSection = ({
     }
   });
 
-
   return (
     <div className="sticky top-0">
-
-      <div className="z-50 mx-2 grid grid-cols-2 w-auto gap-2 overflow-y-scroll rounded-md bg-white/10 p-2 text-lg font-bold shadow-lg">
-        <div>
-          <p aria-label={"Day of the week"}>{writtenDayString}</p>
-          <p aria-label={"Date in DD/MM/YYYY format"}>
+      <div className="z-50 mx-2 mb-2 flex w-auto gap-2 overflow-y-scroll rounded-md bg-white/10 p-2 text-lg shadow-lg">
+        <div className={`w-1/3`}>
+          <p
+            title={"Day of the week"}
+            className={`text-sm font-light`}
+            aria-label={"Day of the week"}
+          >
+            {writtenDayString}
+          </p>
+          <p
+            className={`font-semibold`}
+            aria-label={"Date in DD/MM/YYYY format"}
+            title={"Date in DD/MM/YYYY format"}
+          >
             {currentDate || "Loading..."}
           </p>
         </div>
-        <div className={`flex gap-2`}>
+        <div className={`flex items-center gap-2`}>
           <p>{selectMoonPhaseIcon(dailyMoonData.moonPhase, 40, 40)}</p>
           <div>
-            <p>{moonPhaseName(dailyMoonData.moonPhase)}</p>
-            <p className={`text-sm flex -ml-0.5 items-center font-light`}>
-              <span>{caretUpFill}</span>
-              {dailyMoonData.moonrise}
+            <p className={`font-semibold`} title={"Moon Phase"}>
+              {moonPhaseName(dailyMoonData.moonPhase)}
             </p>
-            <p className={`text-sm flex -ml-0.5 items-center font-light`}>
-              <span>{caretDownFill}</span>
-              {dailyMoonData.moonset}
-            </p>
+            <div className={`flex gap-2`}>
+              <p
+                title={"Time of Moonrise"}
+                className={`-ml-0.5 flex items-center text-sm font-light`}
+              >
+                <span>{caretUpFill}</span>
+                {dailyMoonData.moonrise}
+              </p>
+              <p
+                title={"Time of Moonset"}
+                className={`-ml-0.5 flex items-center text-sm font-light`}
+              >
+                <span>{caretDownFill}</span>
+                {dailyMoonData.moonset}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -213,10 +246,7 @@ const MainWeatherGridSection = ({
           })}
         </div>
         {/* ---------------Weather Data Grid---------------- */}
-        <div
-          ref={mainGridRef}
-          className="flex h-max gap-4 overflow-x-auto"
-        >
+        <div ref={mainGridRef} className="flex h-max gap-4 overflow-x-auto">
           {formattedDate.map((day, dayIndex) => (
             <div
               key={dayIndex}
@@ -230,7 +260,6 @@ const MainWeatherGridSection = ({
                   moonData={moonData}
                   gridItemStyling={gridItemStyling}
                   dayIndex={dayIndex}
-
                 />
                 <TimeParameter
                   dailyWeather={dailyWeatherData}
@@ -267,9 +296,10 @@ const MainWeatherGridSection = ({
                 />
 
                 <PrecipitationParameter
-                  precipitation={precipitation_probability}
+                  precip={{ precipitation_probability, precipitation }}
                   dayIndex={dayIndex}
                   gridItemStyling={gridItemStyling}
+                  weatherModel={weatherModel}
                 />
                 <WindParameter
                   windSpeed={wind_speed_10m}
