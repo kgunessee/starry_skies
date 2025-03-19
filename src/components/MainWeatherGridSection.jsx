@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+
+// Parameter Components //
 import CloudParameter from "./weather-parameters/CloudParameter.jsx";
 import TimeParameter from "./weather-parameters/TimeParameter.jsx";
 import PrecipitationParameter from "./weather-parameters/PrecipitationParameter.jsx";
@@ -7,33 +9,36 @@ import WindParameter from "./weather-parameters/WindParameter.jsx";
 import DewPointParameter from "./weather-parameters/DewPointParameter.jsx";
 import HumidityParameter from "./weather-parameters/HumidityParameter.jsx";
 import TemperatureParameter from "./weather-parameters/TemperatureParameter.jsx";
+import MoonParameter from "./weather-parameters/MoonParameter.jsx";
 
+// Functions //
 import { dateToTime, timeToHour, unixToTime } from "./conversionFunctions.js";
+
+// Icons //
 import {
   selectMoonPhaseIcon,
   moonPhaseName,
 } from "./selectMoonIconFunction.js";
-import MoonParameter from "./weather-parameters/MoonParameter.jsx";
 import {caretDownFill, caretUpFill} from "./SVGIcons.jsx";
+
+//--------------------------------------------------------------------------------------//
 
 const MainWeatherGridSection = ({
   isKPH,
-  isFarenheit,
-  // mainSectionHeight,
+  isFahrenheit,
   loading,
   weatherData,
   error,
   moonData,
 }) => {
-  const [currentDate, setCurrentDate] = useState(""); // Holds the active date
+  const [currentDate, setCurrentDate] = useState("");
   const [speedUnit, setSpeedUnit] = useState("MPH");
   const [tempUnit, setTempUnit] = useState("C");
   const [dailyWeatherData, setDailyWeatherData] = useState({});
   const [dailyMoonData, setDailyMoonData] = useState({});
   const [writtenDayString, setWrittenDayString] = useState("");
 
-  const sectionRefs = useRef([]); // Stores refs for each section
-  const timeGridRef = useRef(null);
+  const sectionRefs = useRef([]);
   const mainGridRef = useRef(null);
 
   // ---------------INTERSECTION OBSERVER TO CHANGE DATE BASED ON THE DATE IN VIEW---------------------------------------------------
@@ -90,8 +95,8 @@ const MainWeatherGridSection = ({
   }, [isKPH]);
 
   useEffect(() => {
-    isFarenheit ? setTempUnit("F") : setTempUnit("C");
-  }, [isFarenheit]);
+    isFahrenheit ? setTempUnit("F") : setTempUnit("C");
+  }, [isFahrenheit]);
 
   if (loading) return <div>Loading weather...</div>;
   if (error) return <div>Error fetching weather: {error.message}</div>;
@@ -162,14 +167,6 @@ const MainWeatherGridSection = ({
     }
   });
 
-  // let isSyncing = false;
-  //
-  // const handleScroll = (sourceRef, targetRef) => {
-  //   if (!sourceRef.current || !targetRef.current || isSyncing) return;
-  //   isSyncing = true;
-  //   targetRef.current.scrollLeft = sourceRef.current.scrollLeft;
-  //   isSyncing = false;
-  // };
 
   return (
     <div className="sticky top-0">
@@ -196,50 +193,6 @@ const MainWeatherGridSection = ({
           </div>
         </div>
       </div>
-
-      {/*TIME & MOON GRID SECTION - SCROLLABLE*/}
-      <div className={`mt-2 flex`}>
-        {/*<div*/}
-        {/*  className={`bg-background/50 flex w-[100px] shrink-0 flex-col items-end gap-1 px-1 text-xs`}*/}
-        {/*>*/}
-        {/*  <p className={`flex min-h-8 w-auto items-center text-right text-xs`}>*/}
-        {/*    Moon*/}
-        {/*  </p>*/}
-        {/*  <p className={`flex min-h-8 w-auto items-center text-right text-xs`}>*/}
-        {/*    Time (24hr)*/}
-        {/*  </p>*/}
-        {/*</div>*/}
-        {/*<div*/}
-        {/*  ref={timeGridRef}*/}
-        {/*  onScroll={() => handleScroll(timeGridRef, mainGridRef)}*/}
-        {/*  className={`flex gap-4 overflow-y-scroll`}*/}
-        {/*>*/}
-        {/*  {formattedDate.map((day, dayIndex) => (*/}
-        {/*    <div*/}
-        {/*      key={dayIndex}*/}
-        {/*      ref={(item) => (sectionRefs.current[dayIndex] = item)}*/}
-        {/*      data-date={day}*/}
-        {/*      className=""*/}
-        {/*    >*/}
-        {/*      /!* ---------------Weather Data Grid---------------- *!/*/}
-        {/*      <div className={``}>*/}
-        {/*        <MoonParameter*/}
-        {/*          time={timeToHour(time)}*/}
-        {/*          dayIndex={dayIndex}*/}
-        {/*          moonData={dailyMoonData}*/}
-        {/*          gridItemStyling={gridItemStyling}*/}
-        {/*        />*/}
-        {/*        <TimeParameter*/}
-        {/*          dailyWeather={dailyWeatherData}*/}
-        {/*          time={timeToHour(time)}*/}
-        {/*          dayIndex={dayIndex}*/}
-        {/*          gridItemStyling={gridItemStyling}*/}
-        {/*        />*/}
-        {/*      </div>*/}
-        {/*    </div>*/}
-        {/*  ))}*/}
-        {/*</div>*/}
-      </div>
       {/*--------------------GRID SECTION-------------------------*/}
       <section
         // style={{ maxHeight: `${mainSectionHeight}px overflow-scroll` }}
@@ -262,7 +215,6 @@ const MainWeatherGridSection = ({
         {/* ---------------Weather Data Grid---------------- */}
         <div
           ref={mainGridRef}
-          // onScroll={() => handleScroll(mainGridRef, timeGridRef)}
           className="flex h-max gap-4 overflow-x-auto"
         >
           {formattedDate.map((day, dayIndex) => (
@@ -332,7 +284,7 @@ const MainWeatherGridSection = ({
                   temp={temperature_2m}
                   dayIndex={dayIndex}
                   gridItemStyling={gridItemStyling}
-                  isFarenheit={isFarenheit}
+                  isFarenheit={isFahrenheit}
                 />
                 <HumidityParameter
                   humidity={relative_humidity_2m}
@@ -344,7 +296,7 @@ const MainWeatherGridSection = ({
                   dayIndex={dayIndex}
                   gridItemStyling={gridItemStyling}
                   additionalWeatherVariable={temperature_2m}
-                  isFarenheit={isFarenheit}
+                  isFarenheit={isFahrenheit}
                 />
               </div>
             </div>
