@@ -37,8 +37,8 @@ const LocationInput = ({
     userLonInput(value);
   };
 
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
   };
 
   const handlePlaceChanged = () => {
