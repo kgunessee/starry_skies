@@ -6,21 +6,26 @@ import {
   getUserLocationIcon,
   loadingSpinner,
 } from "./SVGIcons.jsx";
+import {
+  GeoapifyGeocoderAutocomplete,
+  GeoapifyContext,
+} from "@geoapify/react-geocoder-autocomplete";
+import "@geoapify/geocoder-autocomplete/styles/minimal.css";
 
 const LocationInput = ({
-  onLocationSelected,
-  userLonInput,
-  userLatInput,
-  fetchWeatherData,
-  loading,
-}) => {
+                         onLocationSelected,
+                         userLonInput,
+                         userLatInput,
+                         fetchWeatherData,
+                         loading,
+                       }) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // Replace with your API key
     libraries,
   });
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState("Nuneaton");
   const [latValue, setLatValue] = useState("51.5072");
-  const [lonValue, setLonValue] = useState("-0.145");
+  const [lonValue, setLonValue] = useState("-1.45");
   const [geoLoading, setGeoLoading] = useState(false);
 
   const autocompleteRef = useRef(null);
@@ -37,33 +42,22 @@ const LocationInput = ({
     userLonInput(value);
   };
 
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
+  // const handleInputChange = (value) => {
+  //   // Only update the input value for typing, not hover
+  // };
 
-  const handlePlaceChanged = () => {
-    if (autocompleteRef.current) {
-      const place = autocompleteRef.current.getPlace();
-      if (place && place.geometry && place.geometry.location) {
-        const lat = place.geometry.location.lat();
-        const lon = place.geometry.location.lng();
-        onLocationSelected(lat, lon);
-        setLatValue(lat.toFixed(3));
-        setLonValue(lon.toFixed(3));
-
-        // Update the input value with the full address/place name
-        setInputValue(place.formatted_address || place.name || "");
-
-        // Call handleLatChange and handleLonChange with the lat and lng values
-        handleLatChange({ target: { value: lat.toFixed(3) } });
-        handleLonChange({ target: { value: lon.toFixed(3) } });
-      }
+  const handlePlaceChanged = (value) => {
+    if (value && value.properties && value.properties.lat && value.properties.lon){
+      const lat = value.properties.lat;
+      const lon = value.properties.lon;
+      onLocationSelected(lat, lon);
+      setLatValue(lat.toFixed(3));
+      setLonValue(lon.toFixed(3));
+      setInputValue(value.properties.formatted_address || "");
+      handleLatChange({ target: { value: lat.toFixed(3) } });
+      handleLonChange({ target: { value: lon.toFixed(3) } });
     }
   };
-
-  useEffect(() => {
-    console.log(latValue, lonValue);
-  }, [latValue, lonValue]);
 
   const handleGetUserLocation = (e) => {
     e.preventDefault();
@@ -100,20 +94,14 @@ const LocationInput = ({
       <div className={`flex flex-col gap-2`}>
         <div className={`flex w-full gap-2`}>
           <div className="flex-grow">
-            <Autocomplete
-              onLoad={(autocomplete) => {
-                autocompleteRef.current = autocomplete;
-              }}
-              onPlaceChanged={handlePlaceChanged}
-            >
-              <input
-                className={`w-full rounded bg-white/10 p-2`}
-                type="text"
-                placeholder="Enter a location"
+            <GeoapifyContext apiKey="b9a42a277312407c90be3a00db2b2ef2">
+              <GeoapifyGeocoderAutocomplete
+                placeholder="Enter address here"
                 value={inputValue}
-                onChange={handleInputChange}
+                placeSelect={handlePlaceChanged}
+                // suggestionsChange={handleInputChange}
               />
-            </Autocomplete>
+            </GeoapifyContext>
           </div>
           <button
             className={`bg-buttonBlue grid aspect-square w-10 place-items-center items-center rounded`}
