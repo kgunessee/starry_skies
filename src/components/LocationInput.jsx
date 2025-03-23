@@ -125,7 +125,9 @@ const LocationInput = ({
       className={`m-2 rounded-md bg-white/10 p-2`}
       aria-label="Location Input"
     >
-      <div className={`flex flex-col gap-2`}>
+      <div
+        className={`flex flex-col gap-2 lg:flex-row-reverse lg:items-end lg:justify-evenly`}
+      >
         <div className={`flex w-full gap-2`}>
           <div className="flex-grow">
             <GeoapifyContext apiKey={import.meta.env.VITE_GEOAPIFY_API_KEY}>
@@ -141,7 +143,7 @@ const LocationInput = ({
           {/*// Button to fetch user location*/}
           <button
             title={`Get User Location`}
-            className={`bg-buttonBlue grid aspect-square w-10 cursor-pointer place-items-center items-center rounded`}
+            className={`bg-buttonBlue hover:bg-buttonBlue/80 active:bg-buttonBlue/60 grid aspect-square h-10 w-10 cursor-pointer place-items-center items-center rounded`}
             type={"button"}
             onClick={handleGetUserLocation}
           >
@@ -151,7 +153,7 @@ const LocationInput = ({
           {/*// Button to fetch and display weather */}
           <button
             title={`Display Weather Data`}
-            className={`bg-buttonBlue grid aspect-square w-10 cursor-pointer place-items-center rounded`}
+            className={`bg-buttonBlue hover:bg-buttonBlue/80 active:bg-buttonBlue/60 grid aspect-square h-10 w-10 cursor-pointer place-items-center rounded`}
             type={"button"}
             onClick={fetchWeatherData}
           >

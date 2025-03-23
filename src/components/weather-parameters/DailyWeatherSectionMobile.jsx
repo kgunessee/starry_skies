@@ -19,20 +19,20 @@ export default function DailyWeatherSectionMobile({
         >
           {writtenDayString}
         </p>
-        <p
+        <h3
           className={`font-semibold`}
           aria-label={"Date in DD/MM/YYYY format"}
           title={"Date in DD/MM/YYYY format"}
         >
           {currentDate || "Loading..."}
-        </p>
+        </h3>
       </div>
       <div className={`flex items-center gap-2`}>
         <p>{selectMoonPhaseIcon(dailyMoonData.moonPhase, 40, 40)}</p>
         <div>
-          <p className={`font-semibold`} title={"Moon Phase"}>
+          <h3 className={`font-semibold`} title={"Moon Phase"}>
             {moonPhaseName(dailyMoonData.moonPhase)}
-          </p>
+          </h3>
           <div className={`flex gap-2`}>
             <p
               title={"Time of Moonrise"}

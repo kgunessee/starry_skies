@@ -21,6 +21,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
+  const [redLight, setRedLight] = useState(false);
 
   const headerRef = useRef(null);
 
@@ -58,6 +60,25 @@ function App() {
     fetchWeatherData();
   }, []);
 
+  useEffect(() => {
+    const handleWindowResize = () => {
+      setIsMobileMenuOpen(false);
+      if (window.innerWidth <= 1024) {
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+      }
+    };
+
+    handleWindowResize();
+
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, []);
+
   const handleToggleSpeedUnit = () => {
     setKPH(!isKPH);
   };
@@ -74,13 +95,45 @@ function App() {
     setLon(inputValue);
   };
 
+  const handleRedLight = () => {
+    setRedLight(!redLight);
+  };
+
   return (
-    <div className={`text-primaryText mx-auto lg:w-[80vw]`}>
-      <div className={`font-nunito`} ref={headerRef}>
-        <Header
-          handleToggleMenu={handleToggleMenu}
-          isMobileMenuOpen={isMobileMenuOpen}
-        />
+    <>
+      <div className={`text-primaryText mx-auto lg:w-[80vw]`}>
+        <div className={`font-nunito`} ref={headerRef}>
+          <Header
+            handleToggleMenu={handleToggleMenu}
+            isMobileMenuOpen={isMobileMenuOpen}
+            toggleSpeedUnit={handleToggleSpeedUnit}
+            toggleTempUnit={handleToggleTempUnit}
+            isKPH={isKPH}
+            isFahrenheit={isFahrenheit}
+            isMobile={isMobile}
+            redLight={redLight}
+            toggleRedLight={handleRedLight}
+          />
+
+          <LocationInput
+            onLocationSelected={handleLocationSelected}
+            userLonInput={handleUserInputLon}
+            userLatInput={handleUserInputLat}
+            fetchWeatherData={fetchWeatherData}
+            loading={loading}
+          />
+        </div>
+        <main className={`font-nunito relative`}>
+          <MainWeatherGridSection
+            isKPH={isKPH}
+            isFahrenheit={isFahrenheit}
+            loading={loading}
+            error={error}
+            weatherData={weatherData}
+            moonData={moonData}
+            isMobile={isMobile}
+          />
+        </main>
         <AnimatePresence>
           {isMobileMenuOpen && (
             <MobileMenu
@@ -89,28 +142,20 @@ function App() {
               toggleTempUnit={handleToggleTempUnit}
               isKPH={isKPH}
               isFahrenheit={isFahrenheit}
+              isMobile={isMobile}
+              redLight={redLight}
+              toggleRedLight={handleRedLight}
+              handleToggleMenu={handleToggleMenu}
             />
           )}
         </AnimatePresence>
-        <LocationInput
-          onLocationSelected={handleLocationSelected}
-          userLonInput={handleUserInputLon}
-          userLatInput={handleUserInputLat}
-          fetchWeatherData={fetchWeatherData}
-          loading={loading}
-        />
       </div>
-      <main className={`font-nunito relative`}>
-        <MainWeatherGridSection
-          isKPH={isKPH}
-          isFahrenheit={isFahrenheit}
-          loading={loading}
-          error={error}
-          weatherData={weatherData}
-          moonData={moonData}
-        />
-      </main>
-    </div>
+      {redLight && (
+        <div
+          className={`pointer-events-none fixed top-0 z-[999] h-full w-full bg-red-600 mix-blend-color`}
+        ></div>
+      )}
+    </>
   );
 }
 

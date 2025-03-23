@@ -21,22 +21,22 @@ export default function DailyWeatherSectionDesktop({
         >
           {writtenDay(dayIndex)}
         </p>
-        <p
+        <h3
           className={`font-semibold`}
           aria-label={"Date in DD/MM/YYYY format"}
           title={"Date in DD/MM/YYYY format"}
         >
           {day || "Loading..."}
-        </p>
+        </h3>
       </div>
       <div className={`flex items-center gap-2`}>
         <p>
           {selectMoonPhaseIcon(moonData.daily[dayIndex].moon_phase, 40, 40)}
         </p>
         <div>
-          <p className={`font-semibold`} title={"Moon Phase"}>
+          <h3 className={`font-semibold`} title={"Moon Phase"}>
             {moonPhaseName(moonData.daily[dayIndex].moon_phase)}
-          </p>
+          </h3>
           <div className={`flex gap-2`}>
             <p
               title={"Time of Moonrise"}

@@ -15,11 +15,6 @@ import DailyWeatherSectionDesktop from "./weather-parameters/DailyWeatherSection
 
 // Functions //
 import { dateToTime, timeToHour, unixToTime } from "./conversionFunctions.js";
-import {
-  moonPhaseName,
-  selectMoonPhaseIcon,
-} from "./selectMoonIconFunction.js";
-import { caretDownFill, caretUpFill } from "./SVGIcons.jsx";
 
 //--------------------------------------------------------------------------------------//
 
@@ -30,6 +25,7 @@ const MainWeatherGridSection = ({
   weatherData,
   error,
   moonData,
+  isMobile,
 }) => {
   const [currentDate, setCurrentDate] = useState("");
   const [speedUnit, setSpeedUnit] = useState("MPH");
@@ -37,30 +33,9 @@ const MainWeatherGridSection = ({
   const [dailyWeatherData, setDailyWeatherData] = useState({});
   const [dailyMoonData, setDailyMoonData] = useState({});
   const [writtenDayString, setWrittenDayString] = useState("");
-  const [isMobile, setIsMobile] = useState(true);
 
   const sectionRefs = useRef([]);
   const mainGridRef = useRef(null);
-
-  // const isMobile = window.innerWidth <= 1024;
-
-  useEffect(() => {
-    const handleWindowResize = () => {
-      if (window.innerWidth <= 1024) {
-        setIsMobile(true);
-      } else {
-        setIsMobile(false);
-      }
-    };
-
-    handleWindowResize();
-
-    window.addEventListener("resize", handleWindowResize);
-
-    return () => {
-      window.removeEventListener("resize", handleWindowResize);
-    };
-  }, []);
 
   // ---------------INTERSECTION OBSERVER TO CHANGE DATE BASED ON THE DATE IN VIEW---------//
 
@@ -211,7 +186,7 @@ const MainWeatherGridSection = ({
       <section className={`mx-2 flex rounded-md bg-white/10 p-2`}>
         {/* ---------------Parameter Names---------------- */}
         <div
-          className={`mt-20 flex w-[90px] shrink-0 flex-col items-end gap-1 px-1`}
+          className={`flex w-[90px] shrink-0 flex-col items-end gap-1 px-1 lg:mt-20`}
         >
           {parameterNames.map((name) => {
             return (
