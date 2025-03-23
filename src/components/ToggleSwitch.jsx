@@ -2,25 +2,22 @@ import React from "react";
 
 export default function ToggleSwitch({
   toggleUnit,
-  leftUnit,
-  rightUnit,
+  unit1,
+  unit2,
   isToggled,
+  label,
 }) {
   return (
-    <div className={`flex items-center gap-2`}>
-      <p>{leftUnit}</p>
-      <div
+    <div className={`flex flex-col gap-2`}>
+      <label className={`text-sm`}>{label}</label>
+      <button
         onClick={() => {
           toggleUnit();
         }}
-        className={`bg-primaryText relative h-8 w-16 rounded-full hover:cursor-pointer`}
+        className={`bg-accentBlue cursor-pointer items-center gap-2 rounded p-2`}
       >
-        <input type={"button"} />
-        <div
-          className={`bg-buttonBlue absolute top-1/2 h-6 w-6 -translate-y-1/2 rounded-full transition-transform duration-150 ${isToggled ? "right-1" : "left-1"}`}
-        ></div>
-      </div>
-      <p>{rightUnit}</p>
+        {isToggled ? unit2 : unit1}
+      </button>
     </div>
   );
 }

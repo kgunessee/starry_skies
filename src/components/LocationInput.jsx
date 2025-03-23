@@ -1,16 +1,19 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useLoadScript, Autocomplete } from "@react-google-maps/api";
-const libraries = ["places"];
+import { useState } from "react";
+
+// Icons //
 import {
   searchIcon,
   getUserLocationIcon,
   loadingSpinner,
 } from "./SVGIcons.jsx";
+
+// Libraries //
 import {
   GeoapifyGeocoderAutocomplete,
   GeoapifyContext,
 } from "@geoapify/react-geocoder-autocomplete";
 import "@geoapify/geocoder-autocomplete/styles/minimal.css";
+import axios from "axios";
 
 const LocationInput = ({
   onLocationSelected,
@@ -19,16 +22,10 @@ const LocationInput = ({
   fetchWeatherData,
   loading,
 }) => {
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // Replace with your API key
-    libraries,
-  });
   const [inputValue, setInputValue] = useState("");
   const [latValue, setLatValue] = useState("51.5072");
   const [lonValue, setLonValue] = useState("-1.45");
   const [geoLoading, setGeoLoading] = useState(false);
-
-  const autocompleteRef = useRef(null);
 
   const handleLatChange = (e) => {
     const value = e.target.value;
@@ -42,11 +39,43 @@ const LocationInput = ({
     userLonInput(value);
   };
 
-  const handleInputChange = (value) => {
-    // Only update the input value for typing, not hover
+  const handleInputChange = () => {
+    /* This empty function prevents the user input box from being populated by the autocomplete locations when they are hovered.
+    Without this function, the input box would show '[OBJECT, OBJECT]' on hover due to how the location data is provided.
+    It ensures that the location is only populated in the correct format when the user clicks the location. */
   };
 
-  const handlePlaceChanged = (value) => {
+  // Reverse geocoding using Geoapify's reverse geocoding API. This displays the users location in the input box.
+  const handleReverseGeolocation = (lat, lon) => {
+    axios
+      .get(
+        `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&apiKey=${
+          import.meta.env.VITE_GEOAPIFY_API_KEY
+        }`,
+      )
+      .then((response) => {
+        const data = response.data;
+        if (data.features && data.features.length > 0) {
+          setInputValue(data.features[0].properties.city);
+        } else {
+          setInputValue(
+            `Latitude: ${lat.toFixed(3)}, Longitude: ${lon.toFixed(3)}`,
+          );
+        }
+        setGeoLoading(false);
+        fetchWeatherData();
+      })
+      .catch((error) => {
+        console.error("Error reverse geocoding:", error);
+        setInputValue(
+          `Latitude: ${lat.toFixed(3)}, Longitude: ${lon.toFixed(3)}`,
+        );
+        setGeoLoading(false);
+        fetchWeatherData();
+      });
+  };
+
+  const handleChangeLocation = (value) => {
     if (
       value &&
       value.properties &&
@@ -64,6 +93,7 @@ const LocationInput = ({
     }
   };
 
+  // Get the users location with permission and display the weather results
   const handleGetUserLocation = (e) => {
     e.preventDefault();
     setGeoLoading(true);
@@ -71,11 +101,12 @@ const LocationInput = ({
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          onLocationSelected(lat, lng);
+          const lon = position.coords.longitude;
+          onLocationSelected(lat, lon);
           setLatValue(lat.toFixed(3));
-          setLonValue(lng.toFixed(3));
-          setGeoLoading(false);
+          setLonValue(lon.toFixed(3));
+
+          handleReverseGeolocation(lat, lon);
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -85,11 +116,9 @@ const LocationInput = ({
       );
     } else {
       alert("Geolocation is not supported by this browser.");
+      setGeoLoading(false);
     }
   };
-
-  if (loadError) return <div>Error loading maps!</div>;
-  if (!isLoaded) return <div>Loading...</div>;
 
   return (
     <section
@@ -103,11 +132,13 @@ const LocationInput = ({
               <GeoapifyGeocoderAutocomplete
                 placeholder="Enter address here"
                 value={inputValue}
-                placeSelect={handlePlaceChanged}
+                placeSelect={handleChangeLocation}
                 suggestionsChange={handleInputChange}
               />
             </GeoapifyContext>
           </div>
+
+          {/*// Button to fetch user location*/}
           <button
             title={`Get User Location`}
             className={`bg-buttonBlue grid aspect-square w-10 cursor-pointer place-items-center items-center rounded`}
@@ -116,6 +147,8 @@ const LocationInput = ({
           >
             {geoLoading ? loadingSpinner : getUserLocationIcon}
           </button>
+
+          {/*// Button to fetch and display weather */}
           <button
             title={`Display Weather Data`}
             className={`bg-buttonBlue grid aspect-square w-10 cursor-pointer place-items-center rounded`}
@@ -128,7 +161,6 @@ const LocationInput = ({
         <div className={`flex gap-2`}>
           <div>
             <label htmlFor={"lat"}>Latitude</label>
-
             <input
               id={"lat"}
               className={`w-full rounded bg-white/10 p-2`}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Parameter Components //
 import CloudParameter from "./weather-parameters/CloudParameter.jsx";
@@ -10,14 +10,14 @@ import DewPointParameter from "./weather-parameters/DewPointParameter.jsx";
 import HumidityParameter from "./weather-parameters/HumidityParameter.jsx";
 import TemperatureParameter from "./weather-parameters/TemperatureParameter.jsx";
 import MoonParameter from "./weather-parameters/MoonParameter.jsx";
+import DailyWeatherSectionMobile from "./weather-parameters/DailyWeatherSectionMobile.jsx";
+import DailyWeatherSectionDesktop from "./weather-parameters/DailyWeatherSectionDesktop.jsx";
 
 // Functions //
 import { dateToTime, timeToHour, unixToTime } from "./conversionFunctions.js";
-
-// Icons //
 import {
-  selectMoonPhaseIcon,
   moonPhaseName,
+  selectMoonPhaseIcon,
 } from "./selectMoonIconFunction.js";
 import { caretDownFill, caretUpFill } from "./SVGIcons.jsx";
 
@@ -28,7 +28,6 @@ const MainWeatherGridSection = ({
   isFahrenheit,
   loading,
   weatherData,
-  weatherModel,
   error,
   moonData,
 }) => {
@@ -38,18 +37,39 @@ const MainWeatherGridSection = ({
   const [dailyWeatherData, setDailyWeatherData] = useState({});
   const [dailyMoonData, setDailyMoonData] = useState({});
   const [writtenDayString, setWrittenDayString] = useState("");
-  const [precipitationUnit, setPrecipitationUnit] = useState("mm");
+  const [isMobile, setIsMobile] = useState(true);
 
   const sectionRefs = useRef([]);
   const mainGridRef = useRef(null);
 
-  // ---------------INTERSECTION OBSERVER TO CHANGE DATE BASED ON THE DATE IN VIEW---------------------------------------------------
+  // const isMobile = window.innerWidth <= 1024;
+
+  useEffect(() => {
+    const handleWindowResize = () => {
+      if (window.innerWidth <= 1024) {
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+      }
+    };
+
+    handleWindowResize();
+
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, []);
+
+  // ---------------INTERSECTION OBSERVER TO CHANGE DATE BASED ON THE DATE IN VIEW---------//
+
   useEffect(() => {
     if (!weatherData || !weatherData.hourly) return;
 
-    const isMobile = window.innerWidth <= 768; // Adjust breakpoint as needed
-    const threshold = isMobile ? 0.1 : 0.2; // Adjust thresholds
-    const rootMargin = isMobile ? "0px 0px -20px 0px" : "0px"; // Adjust rootMargin
+    // const isMobile = window.innerWidth <= 1024;
+    const threshold = isMobile ? 0.1 : 0.2; // Intersection Observer Threshold
+    const rootMargin = isMobile ? "0px 0px -20px 0px" : "0px"; // Intersection Observer Root Margin
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -100,23 +120,12 @@ const MainWeatherGridSection = ({
     isFahrenheit ? setTempUnit("F") : setTempUnit("C");
   }, [isFahrenheit]);
 
-  useEffect(() => {
-    if (weatherData && weatherData.hourly) {
-      console.log(weatherData.hourly);
-    }
-  }, []);
-
-  useEffect(() => {
-    weatherModel === "ukmo_seamless"
-      ? setPrecipitationUnit("mm")
-      : setPrecipitationUnit("%");
-  }, [weatherModel]);
-
   if (loading) return <div>Loading weather...</div>;
   if (error) return <div>Error fetching weather: {error.message}</div>;
   if (!weatherData) return <div>Enter a location to see the weather.</div>;
   if (!weatherData.hourly) return <div>Weather data not available</div>;
 
+  // Destructured weather params from API response
   const {
     time,
     cloud_cover,
@@ -136,6 +145,7 @@ const MainWeatherGridSection = ({
 
   const { sunrise, sunset } = weatherData.daily;
 
+  // Weather params to display
   const parameterNames = [
     "Moon Visibility",
     "Time (24hr)",
@@ -144,8 +154,9 @@ const MainWeatherGridSection = ({
     "Clouds (Mid)",
     "Clouds (Low)",
     "Weather",
+    `Precipitation (%)`,
+    `Precipitation (mm)`,
     `Wind (${speedUnit})`,
-    `Precipitation (${precipitationUnit})`,
     "Wind Direction",
     `Gusts (${speedUnit})`,
     `Temperature (°${tempUnit})`,
@@ -156,6 +167,7 @@ const MainWeatherGridSection = ({
   const gridItemStyling =
     "relative grid h-8 w-8 place-items-center text-black text-sm rounded-sm p-1";
 
+  // Function that takes the day of the week (0-6) and returns the written day
   const formattedDate = [];
   const writtenDay = (value) => {
     if (value === 0) {
@@ -172,6 +184,8 @@ const MainWeatherGridSection = ({
       return "Friday";
     } else return "Saturday";
   };
+
+  // Function that takes the date and returns it in DD/MM/YYYY format
   time.forEach((time, index) => {
     if (index % 24 === 0) {
       const convertedToDate = new Date(time);
@@ -184,56 +198,21 @@ const MainWeatherGridSection = ({
 
   return (
     <div className="sticky top-0">
-      <div className="z-50 mx-2 mb-2 flex w-auto gap-2 overflow-y-scroll rounded-md bg-white/10 p-2 text-lg shadow-lg">
-        <div className={`w-1/3`}>
-          <p
-            title={"Day of the week"}
-            className={`text-sm font-light`}
-            aria-label={"Day of the week"}
-          >
-            {writtenDayString}
-          </p>
-          <p
-            className={`font-semibold`}
-            aria-label={"Date in DD/MM/YYYY format"}
-            title={"Date in DD/MM/YYYY format"}
-          >
-            {currentDate || "Loading..."}
-          </p>
-        </div>
-        <div className={`flex items-center gap-2`}>
-          <p>{selectMoonPhaseIcon(dailyMoonData.moonPhase, 40, 40)}</p>
-          <div>
-            <p className={`font-semibold`} title={"Moon Phase"}>
-              {moonPhaseName(dailyMoonData.moonPhase)}
-            </p>
-            <div className={`flex gap-2`}>
-              <p
-                title={"Time of Moonrise"}
-                className={`-ml-0.5 flex items-center text-sm font-light`}
-              >
-                <span>{caretUpFill}</span>
-                {dailyMoonData.moonrise}
-              </p>
-              <p
-                title={"Time of Moonset"}
-                className={`-ml-0.5 flex items-center text-sm font-light`}
-              >
-                <span>{caretDownFill}</span>
-                {dailyMoonData.moonset}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/*--------------------GRID SECTION-------------------------*/}
-      <section
-        // style={{ maxHeight: `${mainSectionHeight}px overflow-scroll` }}
-        className={`mx-2 flex rounded-md bg-white/10 p-2`}
-      >
-        {/* ---------------Parameter Names---------------- */}
+      {/*// ---------------------------DAILY WEATHER SECTION----------------------------//*/}
+      {isMobile && (
+        <DailyWeatherSectionMobile
+          writtenDayString={writtenDayString}
+          currentDate={currentDate}
+          dailyMoonData={dailyMoonData}
+        />
+      )}
 
-        <div className={`flex w-[90px] shrink-0 flex-col items-end gap-1 px-1`}>
+      {/*// ---------------------------GRID SECTION----------------------------//*/}
+      <section className={`mx-2 flex rounded-md bg-white/10 p-2`}>
+        {/* ---------------Parameter Names---------------- */}
+        <div
+          className={`mt-20 flex w-[90px] shrink-0 flex-col items-end gap-1 px-1`}
+        >
           {parameterNames.map((name) => {
             return (
               <p
@@ -254,6 +233,14 @@ const MainWeatherGridSection = ({
               data-date={day}
               className=""
             >
+              {!isMobile && (
+                <DailyWeatherSectionDesktop
+                  day={day}
+                  dayIndex={dayIndex}
+                  writtenDay={writtenDay}
+                  moonData={moonData}
+                />
+              )}
               <div>
                 <MoonParameter
                   time={timeToHour(time)}
@@ -294,12 +281,10 @@ const MainWeatherGridSection = ({
                   dailyWeather={dailyWeatherData}
                   time={timeToHour(time)}
                 />
-
                 <PrecipitationParameter
-                  precip={{ precipitation_probability, precipitation }}
+                  precipParams={{ precipitation_probability, precipitation }}
                   dayIndex={dayIndex}
                   gridItemStyling={gridItemStyling}
-                  weatherModel={weatherModel}
                 />
                 <WindParameter
                   windSpeed={wind_speed_10m}
@@ -309,7 +294,6 @@ const MainWeatherGridSection = ({
                   gridItemStyling={gridItemStyling}
                   isKPH={isKPH}
                 />
-
                 <TemperatureParameter
                   temp={temperature_2m}
                   dayIndex={dayIndex}
